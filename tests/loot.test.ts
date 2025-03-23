@@ -2,24 +2,25 @@ import { DataTypes, Sequelize } from 'sequelize';
 import { ILoot, LootDbModel, LootFileModel } from '../server/models/loot.model';
 
 function createLoot(name: string, value: number): ILoot {
-  return { name, value };
+  return { id: 0, name, value };
 }
 
 describe('ILoot interface', () => {
   test('should create a valid ILoot object', () => {
     const keyVal: ILoot = createLoot('test', 42);
-    expect(keyVal).toEqual({ name: 'test', value: 42 });
+    expect(keyVal).toEqual({ id: 0, name: 'test', value: 42 });
   });
 
   test('should have correct types for name and value', () => {
     const keyVal: ILoot = createLoot('example', 100);
+    expect(typeof keyVal.id).toBe('number');
     expect(typeof keyVal.name).toBe('string');
     expect(typeof keyVal.value).toBe('number');
   });
 
   test('should not allow invalid types', () => {
     // @ts-expect-error
-    const invalidKeyVal: ILoot = { name: 123, value: 'invalid' };
+    const invalidKeyVal: ILoot = { id: 0, name: 123, value: 'invalid' };
     expect(invalidKeyVal).toBeDefined(); // This line is just to use the variable
   });
 });

@@ -42,7 +42,9 @@ const characterSequelize = (sequelize: Sequelize) => {
   }, {
     sequelize,
     modelName: 'Character',
-    tableName: 'character'
+    tableName: 'character',
+    underscored: true,  // Converts all camelCased columns to underscored
+    timestamps: true,   // This enables the createdAt and updatedAt columns
   });
   return CharacterDbModel;
 };

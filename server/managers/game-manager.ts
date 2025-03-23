@@ -2,6 +2,7 @@ import { ColorLogger } from "../../utilities/colorLogger";
 import { MonsterGenerator } from "../../utilities/monsterGenerator";
 import { PlayerGenerator } from "../../utilities/playerGenerator";
 import { RandomGenerator } from "../../utilities/randomGenerator";
+import { LootGenerator } from "../../utilities/lootGenerator";
 import { IEnemy, EnemyFileModel } from "../models/enemy.model";
 import { IPlayer, PlayerFileModel } from "../models/player.model";
 import { ILoot, LootFileModel } from "../models/loot.model";
@@ -11,7 +12,8 @@ import { CharacterService } from "../services/character.service";
 
 class GameManager {
   private player: IPlayer | null;
-  private playerLoot: ILoot[];
+  private playerLoots: ILoot[];
+  private monsterLoots: ILoot[];
   private monsters: IEnemy[];
   private deadMonsters: IEnemy[];
   private roundGenerator: RandomGenerator;
@@ -20,8 +22,9 @@ class GameManager {
   constructor() {
     this.player = null;
     this.monsters = [];
+    this.monsterLoots = [];
+    this.playerLoots = [];
     this.deadMonsters = [];
-    this.playerLoot = [];
     this.roundGenerator = new RandomGenerator();
     this.message = "";
   }
@@ -52,11 +55,11 @@ class GameManager {
   }
 
   private printLoot(player: PlayerService) {
-    console.info(`You looted ${this.playerLoot.length} items:`);
+    console.info(`You looted ${this.playerLoots.length} items:`);
     let totalValue = 0;
-    for (let i = 0; i < this.playerLoot.length; i++) {
-      console.info(`* ${this.playerLoot[i].name} worth ${this.playerLoot[i].value}.`);
-      totalValue += this.playerLoot[i].value;
+    for (let i = 0; i < this.playerLoots.length; i++) {
+      console.info(`* ${this.playerLoots[i].name} worth ${this.playerLoots[i].value}.`);
+      totalValue += this.playerLoots[i].value;
     }
     console.warn(`You ended with ${player.experience} experience points and ${totalValue} gold.`);
   }
@@ -93,9 +96,15 @@ class GameManager {
   }
 
   private generateMonsters() {
-    let generator = new MonsterGenerator();
+    let monsterGenerator = new MonsterGenerator();
+    let lootGenerator = new LootGenerator();
+
     for (let i = 0; i < 10; i++) {
-      this.monsters.push(generator.generateMonster());
+      let loot = lootGenerator.generateLoot(1);
+      const monster = monsterGenerator.generateMonster(loot.id);
+      loot.value = Math.ceil(monster.attackPower / 10);
+      this.monsterLoots.push(loot);
+      this.monsters.push(monster);
     }
   }
 
@@ -126,9 +135,12 @@ class GameManager {
     // If the enemy is dead, add the loot to the player's loot and print a message
     if (!monster.isAlive()) {
       player.gainExperience(monster.character.level * 10);
-      this.playerLoot.push(monster.loot);
+      let loot = this.monsterLoots.find(x => x.id === monster.loot_id);
+      if (loot) {
+        this.playerLoots.push(loot);
+        ColorLogger.warn(`You looted ${loot.name} worth ${loot.value}.`);
+      }
       this.deadMonsters.push(monster.enemy);
-      ColorLogger.warn(`You looted ${monster.loot.name} worth ${monster.loot.value}.`);
     }
     return player.isAlive();
   }
@@ -143,7 +155,8 @@ class GameManager {
     enemyModel.save(this.monsters);
 
     let lootModel = new LootFileModel();
-    lootModel.save(this.playerLoot);
+    lootModel.save(this.playerLoots);
+    //lootModel.save(this.monsterLoots);
   }
 }
 

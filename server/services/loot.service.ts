@@ -8,7 +8,7 @@ export class LootService {
   constructor(nameOrData: string | ILoot, value?: number) {
       if (typeof nameOrData === 'string' &&
           typeof value === 'number') {
-          this._loot = { name: nameOrData, value };
+          this._loot = { id: 0, name: nameOrData, value };
       } else if (typeof nameOrData === 'object') {
           this._loot = { ...nameOrData };
       } else {

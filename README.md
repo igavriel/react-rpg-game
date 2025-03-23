@@ -83,3 +83,65 @@ We use `askQuestion()` to get player input asynchronously.
    - Manage player's defeated enemies
    - Manage player inventory and collected loots
 
+### ERD Diagram
+
+```mermaid
+erDiagram
+    CHARACTER {
+        int id PK
+        string name
+        int health
+        int attackPower
+        float luck
+        int level
+    }
+    
+    PLAYER {
+        int character_id PK, FK
+        int experience
+        int levelUpExperience
+    }
+    
+    ENEMY {
+        int character_id PK, FK
+        inr loot_id FK
+    }
+    
+    LOOT {
+        int id PK
+        string name
+        int value
+    }
+    
+    GAME {
+        int id PK
+    }
+
+    GAME_ENEMY {
+        int game_id FK
+        int enemy_id FK
+    }
+
+    GAME_SCORE {
+        int game_id PK
+        int player_id FK
+        int score
+        date date
+    }
+
+    GAME_LOOT {
+        int game_id FK
+        int loot_id FK
+    }
+
+    PLAYER ||--|| CHARACTER : "inherits from"
+    ENEMY ||--|| CHARACTER : "inherits from"
+    ENEMY ||--|| LOOT : "has one loot"
+
+    GAME ||--|| GAME_SCORE : "has one score"
+    GAME ||--o{ GAME_ENEMY : "has many"
+    GAME_ENEMY ||--o{ ENEMY : "has many"
+    GAME_SCORE ||--|| PLAYER : "has one player"
+    GAME_SCORE ||--o{ GAME_LOOT : "has many"
+    GAME_LOOT ||--o{ LOOT : "has many winning loots"
+```

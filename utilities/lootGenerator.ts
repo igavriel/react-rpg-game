@@ -42,7 +42,7 @@ export class LootGenerator extends RandomGenerator {
   public generateLoot(level: number): ILoot {
     const name = this.generateItemName();
     const value = this.calculateValue(level);
-    return { name, value };
+    return { id: 0, name, value };
   }
 }
 

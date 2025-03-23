@@ -2,7 +2,6 @@
 // MonsterGenerator is a class that generates a random monster
 ///////////////////////////////////////////////////////////////////////////////
 import { CharacterGenerator } from "./characterGenerator";
-import { LootGenerator } from "./lootGenerator";
 import { IEnemy } from "../server/models/enemy.model";
 
 export class MonsterGenerator extends CharacterGenerator {
@@ -28,17 +27,14 @@ export class MonsterGenerator extends CharacterGenerator {
   }
 
   // Generate a random monster
-  public generateMonster(): IEnemy {
+  public generateMonster(lootId: number): IEnemy {
     const name = this.generateName();
     const health = this.generateHealth();
     const attackPower = this.generateAttackPower();
     const luck = this.generateLuck();
     const level = this.generateLevel();
 
-    const generator = new LootGenerator();
-    const loot = generator.generateLoot(Math.ceil(attackPower / 10));
-
-    return { id: 0, name, health, attackPower, luck, level, loot };
+    return { id: 0, name, health, attackPower, luck, level, lootId };
   }
 }
 
@@ -47,6 +43,6 @@ export class MonsterGenerator extends CharacterGenerator {
 ///////////////////////////////////////////////////////////////////////////////
 // const generator = new MonsterGenerator();
 // for (let i = 0; i < 5; i++) {
-//   console.log(generator.generateMonster(), generator.generateMonster().loot);
+//   console.log(generator.generateMonster(0) );
 // }
 ///////////////////////////////////////////////////////////////////////////////

@@ -30,10 +30,10 @@ class PlayerDbModel extends Model implements IDbPlayer {
   declare levelUpExperience: number;
 }
 
-const playerSequelize = (sequelize: Sequelize) => {
+const playerSequelize = (sequelize: Sequelize, character: typeof CharacterDbModel) => {
   PlayerDbModel.init({
     id:                 { type: DataTypes.INTEGER, primaryKey: true,
-      references:       { model : CharacterDbModel, key: "id", }
+      references:       { model : character, key: "id", }
     },
     experience:         { type: DataTypes.INTEGER, allowNull: false, validate: { min: 0 } },
     levelUpExperience:  { type: DataTypes.INTEGER, allowNull: false, validate: { min: 0 } },
@@ -41,6 +41,8 @@ const playerSequelize = (sequelize: Sequelize) => {
     sequelize,
     modelName: 'Player',
     tableName: 'player',
+    underscored: true, // Converts all camelCased columns to underscored
+    timestamps: false, // This disables the createdAt and updatedAt columns
   });
   return PlayerDbModel;
 };
@@ -63,7 +65,7 @@ export { IPlayer, PlayerFileModel, PlayerDbModel, playerSequelize };
 
 //     // initialize the sequelize model
 //     const characterDbModel = characterSequelize(baseDatabase);
-//     const playerDbModel = playerSequelize(baseDatabase);
+//     const playerDbModel = playerSequelize(baseDatabase, characterDbModel);
 //     // Authenticate and sync database
 //     await baseDatabase.authenticate();
 //     await baseDatabase.sync({ force: false }); // Create tables if not exists
@@ -84,7 +86,7 @@ export { IPlayer, PlayerFileModel, PlayerDbModel, playerSequelize };
 //     ColorLogger.debug(`Created entry: ${newEntry.toJSON().name} ${newEntry.toJSON().experience} ${newEntry.toJSON().levelUpExperience}`);
 
 //     const allEntries = await playerDbModel.findAll({
-//       order: [['createdAt', 'DESC']] // Newest first
+//       order: [['id', 'DESC']] // Newest first
 //     });
 //     console.log('All entries:', allEntries.map(entry => entry.toJSON()));
 //   } catch (error) {
