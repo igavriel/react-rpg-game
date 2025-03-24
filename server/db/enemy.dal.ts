@@ -132,6 +132,8 @@ export class EnemyDAL extends CharacterDAL {
 // import baseDatabase from "./baseDatabase";
 // import { enemySequelize } from "../models/enemy.model";
 // import { lootSequelize } from "../models/loot.model";
+// import { characterSequelize } from "../models/character.model";
+
 // async function example() {
 //   const lootDb = lootSequelize(baseDatabase);
 //   const characterDb = characterSequelize(baseDatabase);
