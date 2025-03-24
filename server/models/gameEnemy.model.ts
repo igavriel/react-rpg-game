@@ -32,7 +32,7 @@ const gameEnemySequelize = (sequelize: Sequelize, game: typeof GameDbModel, enem
   }, {
     sequelize,
     modelName: 'GameEnemy',
-    tableName: 'gameEnemy',
+    tableName: 'game_enemy',
     underscored: true, // Converts all camelCased columns to underscored
     timestamps: false, // This disables the createdAt and updatedAt columns
   });

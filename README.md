@@ -104,7 +104,7 @@ erDiagram
     
     ENEMY {
         int character_id PK, FK
-        inr loot_id FK
+        int loot_id FK
     }
     
     LOOT {
@@ -115,18 +115,14 @@ erDiagram
     
     GAME {
         int id PK
+        int player_id FK
+        int score
+        date date
     }
 
     GAME_ENEMY {
         int game_id FK
         int enemy_id FK
-    }
-
-    GAME_SCORE {
-        int game_id PK
-        int player_id FK
-        int score
-        date date
     }
 
     GAME_LOOT {
@@ -138,10 +134,10 @@ erDiagram
     ENEMY ||--|| CHARACTER : "inherits from"
     ENEMY ||--|| LOOT : "has one loot"
 
-    GAME ||--|| GAME_SCORE : "has one score"
     GAME ||--o{ GAME_ENEMY : "has many"
     GAME_ENEMY ||--o{ ENEMY : "has many"
-    GAME_SCORE ||--|| PLAYER : "has one player"
-    GAME_SCORE ||--o{ GAME_LOOT : "has many"
+
+    GAME ||--|| PLAYER : "has one player"
+    GAME ||--o{ GAME_LOOT : "has many"
     GAME_LOOT ||--o{ LOOT : "has many winning loots"
 ```

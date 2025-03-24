@@ -41,7 +41,7 @@ describe('GameEnemyDbModel Integration Tests', () => {
     }, {
       sequelize: testSequelize,
       modelName: 'GameEnemy',
-      tableName: 'gameEnemy'
+      tableName: 'game_enemy'
     });
 
     await testSequelize.sync({ force: true });

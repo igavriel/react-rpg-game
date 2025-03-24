@@ -80,7 +80,7 @@ class GameManager {
       let playerService = new PlayerService(this.player);
       for (let i = 0; i < this.monsters.length; i++) {
 
-        let monster = new EnemyService(this.monsters[i]);
+        let monster = new EnemyService(this.monsters[i],this.monsterLoots[i]);
         while (playerService.isAlive() && monster.isAlive()) {
           this.message = `[Round-${i + 1}] Player ${this.getStatus(playerService)} vs Monster: ${this.getStatus(monster)} `;
           this.playRound(playerService, monster);
@@ -135,7 +135,7 @@ class GameManager {
     // If the enemy is dead, add the loot to the player's loot and print a message
     if (!monster.isAlive()) {
       player.gainExperience(monster.character.level * 10);
-      let loot = this.monsterLoots.find(x => x.id === monster.loot_id);
+      let loot = this.monsterLoots.find(x => x.id === monster.loot.id);
       if (loot) {
         this.playerLoots.push(loot);
         ColorLogger.warn(`You looted ${loot.name} worth ${loot.value}.`);
