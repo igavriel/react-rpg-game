@@ -44,37 +44,13 @@ export { ILoot, LootFileModel, LootDbModel, lootSequelize };
 
 // Example usage
 ///////////////////////////////////////////////////////////////////////////////
-// import { ColorLogger, LogLevel } from "../../utilities/colorLogger";
-// import baseDatabase from "../db/baseDatabase";
+// import { ColorLogger as Logger, LogLevel } from "../../utilities/colorLogger";
 // async function example() {
-//   ColorLogger.setLevel(LogLevel.DEBUG);
-//   try {
-//     const lootModel = new LootFileModel();
-//     let loots = [{ id: 1, name: "Sword", value: 10 }, { id: 2, name: "Sword2", value: 12 }];
-//     lootModel.save(loots);
-//     const readLoot = lootModel.load();
-//     ColorLogger.debug(readLoot.toString());
-
-//     // initialize the sequelize model
-//     const lootDbModel = lootSequelize(baseDatabase);
-//     // Authenticate and sync database
-//     await baseDatabase.authenticate();
-//     await baseDatabase.sync({ force: false }); // Create tables if not exists
-//     ColorLogger.info('Database connection established');
-//     // Create new record
-//     const newEntry = await lootDbModel.create({ name: "Sword", value: 10 });
-//     const entryJson = newEntry.toJSON();
-//     ColorLogger.debug(`newEntry: ${entryJson.id} ${entryJson.name} ${entryJson.value}`);
-//     // Read all records
-//     const allEntries = await lootDbModel.findAll({
-//       order: [['id', 'DESC']] // Newest first
-//     });
-//     ColorLogger.debug(`allEntries: ${allEntries.map(e => e.toJSON().name)}`);
-//   } catch (error) {
-//     console.error('Database error:', error);
-//   } finally {
-//     await baseDatabase.close();
-//   }
+//   Logger.setLevel(LogLevel.DEBUG);
+//   const lootModel = new LootFileModel();
+//   let loots = [{ id: 1, name: "Sword", value: 10 }, { id: 2, name: "Sword2", value: 12 }];
+//   lootModel.save(loots);
+//   const readLoot = lootModel.load();
+//   Logger.debug(readLoot.toString());
 // }
 // example();
-///////////////////////////////////////////////////////////////////////////////

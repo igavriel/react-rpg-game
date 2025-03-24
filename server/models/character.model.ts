@@ -54,42 +54,13 @@ export { ICharacter, CharacterFileModel, CharacterDbModel, characterSequelize };
 ///////////////////////////////////////////////////////////////////////////////
 // Example usage
 ///////////////////////////////////////////////////////////////////////////////
-// import { ColorLogger, LogLevel } from "../../utilities/colorLogger";
-// import baseDatabase from "../db/baseDatabase";
+// import { ColorLogger as Logger, LogLevel } from "../../utilities/colorLogger";
 // async function example() {
-//   ColorLogger.setLevel(LogLevel.DEBUG);
-//   try {
-//     const characterFileModel = new CharacterFileModel();
-//     let character = [{ id: 1, name: "John", health: 100, attackPower: 10, luck: 0.5, level: 1 }];
-//     characterFileModel.save(character);
-//     const characters = characterFileModel.load();
-//     ColorLogger.debug(characters.toString());
-
-//     // initialize the sequelize model
-//     const characterDbModel = characterSequelize(baseDatabase);
-//     // Authenticate and sync database
-//     await baseDatabase.authenticate();
-//     await baseDatabase.sync({ force: false }); // Create tables if not exists
-//     ColorLogger.info('Database connection established');
-//     // Create new record
-//     const newEntry = await characterDbModel.create({
-//       name: 'test',
-//       health: 100,
-//       attackPower: 10,
-//       luck: 0.5,
-//       level: 1
-//     });
-//     ColorLogger.debug(`Created entry: ${newEntry.toJSON().name} ${newEntry.toJSON().health} ${newEntry.toJSON().attackPower} ${newEntry.toJSON().luck} ${newEntry.toJSON().level}`);
-//     // Read all records
-//     const allEntries = await characterDbModel.findAll({
-//       order: [['createdAt', 'DESC']] // Newest first
-//     });
-//     ColorLogger.debug(`All entries: ${allEntries.map(entry => entry.toJSON().name)}`);
-//   } catch (error) {
-//     console.error('Database error:', error);
-//   } finally {
-//     await baseDatabase.close();
-//   }
+//   Logger.setLevel(LogLevel.DEBUG);
+//   const characterFileModel = new CharacterFileModel();
+//   let character = [{ id: 1, name: "John", health: 100, attackPower: 10, luck: 0.5, level: 1 }];
+//   characterFileModel.save(character);
+//   const characters = characterFileModel.load();
+//   Logger.debug(characters.toString());
 // }
 // example();
-///////////////////////////////////////////////////////////////////////////////

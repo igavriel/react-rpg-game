@@ -1,6 +1,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // ColorLogger is a class that provides a colorized logger for the console
 ///////////////////////////////////////////////////////////////////////////////
+import util from 'util';
+
 export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
@@ -24,32 +26,36 @@ export class ColorLogger {
     this.level = level;
   }
 
-  private static print(level: LogLevel, message: string, ...args: any[]) {
+  private static print(level: LogLevel, message?: any, ...args: any[]) {
     const timestamp = new Date().toISOString();
     const color = this.COLORS[level];
     const levelName = this.LEVEL_NAMES[level].padEnd(5); // Pad to 5 characters for alignment
-    console.log(color, `${timestamp}|${levelName}|`, message, ...args, '\x1b[0m');
+
+    // Format the message and args using util.format
+    const formattedMessage = util.format(message, ...args);
+
+    console.log(color, `${timestamp}|${levelName}|`, formattedMessage, '\x1b[0m');
   }
 
-  static debug(message: string, ...args: any[]) {
+  static debug(message?: any, ...args: any[]) {
     if (this.level <= LogLevel.DEBUG) {
       this.print(LogLevel.DEBUG, message, ...args);
     }
   }
 
-  static info(message: string, ...args: any[]) {
+  static info(message?: any, ...args: any[]) {
     if (this.level <= LogLevel.INFO) {
       this.print(LogLevel.INFO, message, ...args);
     }
   }
 
-  static warn(message: string, ...args: any[]) {
+  static warn(message?: any, ...args: any[]) {
     if (this.level <= LogLevel.WARN) {
       this.print(LogLevel.WARN, message, ...args);
     }
   }
 
-  static error(message: string, ...args: any[]) {
+  static error(message?: any, ...args: any[]) {
     if (this.level <= LogLevel.ERROR) {
       this.print(LogLevel.ERROR, message, ...args);
     }
@@ -64,4 +70,8 @@ export class ColorLogger {
 // ColorLogger.error("Hello, world!");
 // ColorLogger.setLevel(LogLevel.DEBUG);
 // ColorLogger.debug("Hello, world!");
+// ColorLogger.debug("Object: %O", { name: "test", value: 123 });
+// ColorLogger.debug("Array: %O", [1, 2, 3, 4, 5]);
+// ColorLogger.debug("Number: %d", 42);
+// ColorLogger.debug("String: %s", "test");
 ///////////////////////////////////////////////////////////////////////////////
