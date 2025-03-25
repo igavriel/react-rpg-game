@@ -1,7 +1,6 @@
 export class constants {
-  static readonly OUT_DIR = "./.js-out";
-
-  static readonly DB_DIR = `./.sqlitedb`;
+  static readonly OUT_DIR = "dist";
+  static readonly DB_DIR = `dist-db`;
 
   static readonly LOOT_FILE = `${constants.DB_DIR}/loot.json`;
   static readonly CHARACTER_FILE = `${constants.DB_DIR}/character.json`;

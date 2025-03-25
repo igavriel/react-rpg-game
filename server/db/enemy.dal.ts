@@ -133,21 +133,26 @@ export class EnemyDAL extends CharacterDAL {
 // import { enemySequelize } from "../models/enemy.model";
 // import { lootSequelize } from "../models/loot.model";
 // import { characterSequelize } from "../models/character.model";
+// import { LootDAL } from "./loot.dal";
 
 // async function example() {
 //   const lootDb = lootSequelize(baseDatabase);
 //   const characterDb = characterSequelize(baseDatabase);
 //   const enemyDb = enemySequelize(baseDatabase, characterDb, lootDb);
 //   const enemyDAL = new EnemyDAL(characterDb, enemyDb);
+//   const lootDAL = new LootDAL(lootDb);
 
 //   // Authenticate and sync database
 //   await baseDatabase.authenticate();
 //   await baseDatabase.sync({ force: false }); // Create tables if not exists
 //   Logger.info('Database connection established');
 
+//   const loot = await lootDAL.create({ name: "Dragon Loot", value: 100 });
+//   Logger.info('Created loot:', loot);
+
 //   // Create a new enemy with loot
 //   const enemy = await enemyDAL.createEnemy(
-//     { name: "Dragon", health: 200, attackPower: 20, luck: 0.3, level: 5, lootId: 1 }
+//     { name: "Dragon", health: 200, attackPower: 20, luck: 0.3, level: 5, lootId: loot.id }
 //   );
 //   Logger.info('Created enemy:', enemy);
 
