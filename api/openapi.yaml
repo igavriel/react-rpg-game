@@ -1,0 +1,417 @@
+openapi: 3.0.0
+info:
+  title: RPG Game API
+  version: 1.0.0
+  description: API for managing RPG game sessions, battles, and loot
+
+servers:
+  - url: /api/v1
+    description: API v1
+
+paths:
+  /games:
+    get:
+      summary: Get all games
+      operationId: getGames
+      responses:
+        '200':
+          description: Games retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /games/new:
+    post:
+      summary: Start a new game session
+      operationId: createGame
+      responses:
+        '201':
+          description: Game created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /games/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get current game status
+      operationId: getGame
+      responses:
+        '200':
+          description: Game status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /games/{id}/attack:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Player attacks an enemy
+      operationId: attackEnemy
+      responses:
+        '200':
+          description: Attack result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResult'
+        '400':
+          description: Invalid attack
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /games/{id}/defend:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Player defends against an attack
+      operationId: defendAttack
+      responses:
+        '200':
+          description: Defense result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResult'
+        '400':
+          description: Invalid defense
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /games/{id}/escape:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: Player attempts to escape
+      operationId: escapeBattle
+      responses:
+        '200':
+          description: Escape attempt result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActionResult'
+        '400':
+          description: Invalid escape attempt
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /games/{id}/end:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    post:
+      summary: End the game
+      operationId: endGame
+      responses:
+        '200':
+          description: Game ended successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /games/{id}/enemy:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get the current enemy in a game
+      operationId: getCurrentEnemy
+      responses:
+        '200':
+          description: Current enemy retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enemy'
+        '404':
+          description: Game or enemy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /games/{id}/loot:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get loots earned in the game
+      operationId: getGameLoot
+      responses:
+        '200':
+          description: Game loot retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Loot'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /enemies/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get enemy details
+      operationId: getEnemy
+      responses:
+        '200':
+          description: Enemy details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enemy'
+        '404':
+          description: Enemy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /loots/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get loot details
+      operationId: getLoot
+      responses:
+        '200':
+          description: Loot details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Loot'
+        '404':
+          description: Loot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Loot:
+      description: A loot item in the game
+      type: object
+      properties:
+        id:
+          type: integer
+          description: The unique identifier for the loot
+          minimum: 1
+        name:
+          type: string
+          description: The name of the loot
+          minLength: 1
+        value:
+          type: integer
+          description: The value of the loot
+          minimum: 0
+
+    Character:
+      description: A character in the game
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the character
+          type: integer
+          minimum: 1
+        name:
+          description: The name of the character
+          type: string
+          minLength: 1
+        health:
+          description: The current health of the character
+          type: integer
+          minimum: 0
+        attackPower:
+          description: The attack power of the character
+          type: integer
+          minimum: 0
+        luck:
+          description: The luck of the character
+          type: integer
+          minimum: 0
+          maximum: 100
+        level:
+          description: The level of the character
+          type: integer
+          minimum: 1
+
+    Player:
+      description: A player in the game
+      type: object
+      properties:
+        character:
+          $ref: '#/components/schemas/Character'
+        experience:
+          description: The experience points of the player
+          type: integer
+          minimum: 0
+        levelUpExperience:
+          description: The experience points required to level up
+          type: integer
+          minimum: 0
+
+    Enemy:
+      description: An enemy in the game
+      type: object
+      properties:
+        character:
+          $ref: '#/components/schemas/Character'
+        loot:
+          $ref: '#/components/schemas/Loot'
+
+    Game:
+      description: A game in the game
+      type: object
+      properties:
+        id:
+          description: The unique identifier for the game
+          type: integer
+          minimum: 1
+        player:
+          description: The player in the game
+          $ref: '#/components/schemas/Player'
+        score:
+          description: The score of the game
+          type: integer
+          minimum: 0
+        createdAt:
+          description: The date and time the game was created
+          type: string
+          format: date-time
+        enemies:
+          description: The enemies in the game
+          type: array
+          items:
+            $ref: '#/components/schemas/Enemy'
+        loot:
+          description: The loot in the game
+          type: array
+          items:
+            $ref: '#/components/schemas/Loot'
+
+    ActionResult:
+      description: The result of an action in the game
+      type: object
+      properties:
+        player:
+          description: The player in the game
+          $ref: '#/components/schemas/Player'
+        enemy:
+          description: The enemy in the game
+          $ref: '#/components/schemas/Enemy'
+        message:
+          description: The message of the action
+          type: string
+
+    Error:
+      description: An error in the game
+      type: object
+      properties:
+        code:
+          description: The code of the error
+          type: string
+        message:
+          description: The message of the error
+          type: string
+        details:
+          description: The details of the error
+          type: object
+          additionalProperties: true
+
