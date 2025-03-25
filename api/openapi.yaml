@@ -8,9 +8,21 @@ servers:
   - url: /api/v1
     description: API v1
 
+tags:
+  - name: games
+    description: Game management
+  - name: players
+    description: Player management
+  - name: enemies
+    description: Enemy management
+  - name: loots
+    description: Loot management
+
 paths:
   /games:
     get:
+      tags:
+        - games
       summary: Get all games
       operationId: getGames
       responses:
@@ -31,6 +43,8 @@ paths:
 
   /games/new:
     post:
+      tags:
+        - games
       summary: Start a new game session
       operationId: createGame
       responses:
@@ -55,7 +69,9 @@ paths:
         schema:
           type: integer
     get:
-      summary: Get current game status
+      tags:
+        - games
+      summary: Get game status
       operationId: getGame
       responses:
         '200':
@@ -64,6 +80,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Game'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - games
+      summary: Delete a game
+      operationId: deleteGame
+      responses:
+        '200':
+          description: Game deleted successfully
         '404':
           description: Game not found
           content:
@@ -79,6 +109,8 @@ paths:
         schema:
           type: integer
     post:
+      tags:
+        - games
       summary: Player attacks an enemy
       operationId: attackEnemy
       responses:
@@ -109,6 +141,8 @@ paths:
         schema:
           type: integer
     post:
+      tags:
+        - games
       summary: Player defends against an attack
       operationId: defendAttack
       responses:
@@ -139,6 +173,8 @@ paths:
         schema:
           type: integer
     post:
+      tags:
+        - games
       summary: Player attempts to escape
       operationId: escapeBattle
       responses:
@@ -169,6 +205,8 @@ paths:
         schema:
           type: integer
     post:
+      tags:
+        - games
       summary: End the game
       operationId: endGame
       responses:
@@ -193,6 +231,8 @@ paths:
         schema:
           type: integer
     get:
+      tags:
+        - games
       summary: Get the current enemy in a game
       operationId: getCurrentEnemy
       responses:
@@ -208,6 +248,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - games
+      summary: Delete the current enemy in a game
+      operationId: deleteCurrentEnemy
+      responses:
+        '200':
+          description: Current enemy deleted successfully
+        '404':
+          description: Game or enemy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /games/{id}/loot:
     parameters:
@@ -217,6 +271,8 @@ paths:
         schema:
           type: integer
     get:
+      tags:
+        - games
       summary: Get loots earned in the game
       operationId: getGameLoot
       responses:
@@ -234,6 +290,112 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - games
+      summary: Delete the current loot in a game
+      operationId: deleteCurrentLoot
+      responses:
+        '200':
+          description: Current loot deleted successfully
+        '404':
+          description: Game or loot not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /players:
+    get:
+      tags:
+        - players
+      summary: Get all players
+      operationId: getPlayers
+      responses:
+        '200':
+          description: Players retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Player'
+        '404':
+          description: Players not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /players/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - players
+      summary: Get player details
+      operationId: getPlayer
+      responses:
+        '200':
+          description: Player details retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '404':
+          description: Player not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      tags:
+        - players
+      summary: Delete a player
+      operationId: deletePlayer
+      responses:
+        '200':
+          description: Player deleted successfully
+        '404':
+          description: Player not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /players/new:
+    post:
+      tags:
+        - players
+      summary: Create a new player
+      operationId: createPlayer
+      requestBody:
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+            example: "John Doe"
+
+      responses:
+        '201':
+          description: Player created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 
   /enemies/{id}:
     parameters:
@@ -243,6 +405,8 @@ paths:
         schema:
           type: integer
     get:
+      tags:
+        - enemies
       summary: Get enemy details
       operationId: getEnemy
       responses:
@@ -267,6 +431,8 @@ paths:
         schema:
           type: integer
     get:
+      tags:
+        - loots
       summary: Get loot details
       operationId: getLoot
       responses:
