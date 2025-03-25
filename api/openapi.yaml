@@ -47,6 +47,14 @@ paths:
         - games
       summary: Start a new game session
       operationId: createGame
+      requestBody:
+        description: Number of enemies to create
+        required: true
+        content:
+          text/plain:
+            schema:
+              type: number
+            example: 10
       responses:
         '201':
           description: Game created successfully
@@ -396,6 +404,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /enemies:
+    get:
+      tags:
+        - enemies
+      summary: Get all enemies
+      operationId: getEnemies
+      responses:
+        '200':
+          description: Enemies retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Enemy'
+        '404':
+          description: Enemies not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
   /enemies/{id}:
     parameters:
@@ -418,6 +447,28 @@ paths:
                 $ref: '#/components/schemas/Enemy'
         '404':
           description: Enemy not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /loots:
+    get:
+      tags:
+        - loots
+      summary: Get all loots
+      operationId: getLoots
+      responses:
+        '200':
+          description: Loots retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Loot'
+        '404':
+          description: Loots not found
           content:
             application/json:
               schema:
