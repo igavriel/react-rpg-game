@@ -41,6 +41,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /games/top:
+    get:
+      tags:
+        - games
+      summary: Get top games
+      operationId: getTopGames
+      responses:
+        '200':
+          description: Top games retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+        '404':
+          description: Games not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /games/new:
     post:
       tags:
@@ -256,11 +278,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - games
+      summary: Add an enemy to a game
+      operationId: addEnemyToGame
+      responses:
+        '200':
+          description: Enemy added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enemy'
+        '404':
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /games/{id}/enemy/{enemyId}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: enemyId
+        in: path
+        required: true
+        schema:
+          type: integer
     delete:
       tags:
         - games
-      summary: Delete the current enemy in a game
-      operationId: deleteCurrentEnemy
+      summary: Delete the enemy from a game
+      operationId: removeEnemyFromGame
       responses:
         '200':
           description: Current enemy deleted successfully
@@ -298,11 +351,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /games/{id}/loot/{lootId}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+      - name: lootId
+        in: path
+        required: true
+        schema:
+          type: integer
     delete:
       tags:
         - games
-      summary: Delete the current loot in a game
-      operationId: deleteCurrentLoot
+      summary: Delete loot from game
+      operationId: removeLootFromGame
       responses:
         '200':
           description: Current loot deleted successfully
@@ -627,8 +693,3 @@ components:
         message:
           description: The message of the error
           type: string
-        details:
-          description: The details of the error
-          type: object
-          additionalProperties: true
-

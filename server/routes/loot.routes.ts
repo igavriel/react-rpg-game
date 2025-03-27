@@ -1,6 +1,7 @@
 import { Router, Request, Response, RequestHandler } from "express";
 import { ColorLogger as Logger } from '../../utilities/colorLogger';
 import MainDbModels from "./mainDbModels";
+import buildError from "../../utilities/buildError";
 
 class LootController {
   private dbModels: MainDbModels;
@@ -17,14 +18,14 @@ class LootController {
       const loot = await this.dbModels.lootDAL.getById(Number(id));
 
       if (!loot) {
-        res.status(404).json({ message: 'Loot not found' });
+        buildError(404, 'Loot not found', res);
         return;
       }
 
       res.json(loot);
     } catch (error) {
       Logger.error('Error getting loot:', error);
-      res.status(500).json({ message: 'Internal server error' });
+      buildError(500, 'Internal server error', res);
     }
   }
 
@@ -33,14 +34,14 @@ class LootController {
       const loots = await this.dbModels.lootDAL.getAll();
 
       if (!loots) {
-        res.status(404).json({ message: 'Loots not found' });
+        buildError(404, 'Loots not found', res);
         return;
       }
 
       res.json(loots);
     } catch (error) {
       Logger.error('Error getting loots:', error);
-      res.status(500).json({ message: 'Internal server error' });
+      buildError(500, 'Internal server error', res);
     }
   }
 }

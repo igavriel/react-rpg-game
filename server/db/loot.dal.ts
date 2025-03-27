@@ -46,17 +46,13 @@ export class LootDAL {
   }
 
   // Update a loot item
-  async update(id: number, loot: Partial<ILoot>): Promise<ILoot | null> {
+  async update(id: number, loot: Partial<ILoot>) {
     try {
-      const [updated] = await this.dbModel.update(loot, {
+      await this.dbModel.update(loot, {
         where: { id },
         returning: true
       });
-      if (updated) {
-        const updatedLoot = await this.dbModel.findByPk(id);
-        return updatedLoot?.toJSON() || null;
-      }
-      return null;
+
     } catch (error) {
       Logger.error(`Failed to update loot ${id}: ${error}`);
       throw error;

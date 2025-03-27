@@ -6,7 +6,10 @@ import YAML from "yamljs";
 
 import { ColorLogger as Logger } from "../utilities/colorLogger";
 import MainDbModels from "./routes/mainDbModels";
+import playerRoutes from "./routes/player.routes";
+import enemyRoutes from "./routes/enemy.routes";
 import lootRoutes from "./routes/loot.routes";
+import gameRoutes from "./routes/game.routes";
 
 // Load the OpenAPI spec (swagger.yaml)
 const swaggerDocument = YAML.load("./api/openapi.yaml");
@@ -21,6 +24,9 @@ app.use(cors());
 app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
+app.use('/api/v1/games', gameRoutes);
+app.use('/api/v1/players', playerRoutes);
+app.use('/api/v1/enemies', enemyRoutes);
 app.use('/api/v1/loots', lootRoutes);
 
 // Initialize database connection

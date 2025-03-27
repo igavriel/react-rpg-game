@@ -23,9 +23,9 @@ export class GameDAL {
   }
 
   // Create a new game
-  async createGame(game: Omit<IGame, 'id'>): Promise<IGame> {
+  async createGame(playerId: number): Promise<IGame> {
     try {
-      const newGame = await this.gameModel.create(game);
+      const newGame = await this.gameModel.create({ playerId, score: 0, date: new Date() });
       return newGame.toJSON();
     } catch (error) {
       Logger.error(`Failed to create game: ${error}`);

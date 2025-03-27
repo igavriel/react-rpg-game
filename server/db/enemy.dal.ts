@@ -124,6 +124,17 @@ export class EnemyDAL extends CharacterDAL {
       throw error;
     }
   }
+
+  // Delete enemy
+  async deleteEnemy(id: number): Promise<boolean> {
+    try {
+      const deleted = await this.enemyModel.destroy({ where: { id } });
+      return deleted > 0;
+    } catch (error) {
+      Logger.error(`Failed to delete enemy ${id}: ${error}`);
+      throw error;
+    }
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -116,6 +116,17 @@ export class PlayerDAL extends CharacterDAL {
       throw error;
     }
   }
+
+  // Delete player
+  async deletePlayer(id: number): Promise<boolean> {
+    try {
+      const deleted = await this.playerModel.destroy({ where: { id: id } });
+      return deleted > 0;
+    } catch (error) {
+      Logger.error(`Failed to delete player ${id}: ${error}`);
+      throw error;
+    }
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
