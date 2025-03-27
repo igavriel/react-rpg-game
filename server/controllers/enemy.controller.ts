@@ -1,19 +1,22 @@
 import { Router, Request, Response, RequestHandler } from "express";
 import { ColorLogger as Logger } from '../../utilities/colorLogger';
-import MainDbModels from "./mainDbModels";
+import MainDbModels from "../controllers/mainDbModels";
 import buildError from "../../utilities/buildError";
 
 class EnemyController {
   private dbModels: MainDbModels;
 
   constructor() {
+    Logger.debug(`EnemyController constructor`);
     this.dbModels = MainDbModels.getInstance();
     this.getEnemies = this.getEnemies.bind(this);
+    this.getEnemy = this.getEnemy.bind(this);
   }
 
   async getEnemies(req: Request, res: Response) {
     try {
       const enemies = await this.dbModels.enemyDAL.getAllEnemies();
+      Logger.debug(`Total enemies: ${enemies.length}`);
       res.json(enemies);
     } catch (error) {
       Logger.error('Error getting enemies:', error);
@@ -25,12 +28,12 @@ class EnemyController {
     try {
       const { id } = req.params;
       const enemy = await this.dbModels.enemyDAL.getEnemyById(Number(id));
-
       if (!enemy) {
         buildError(404, 'Enemy not found', res);
         return;
       }
 
+      Logger.debug(`Enemy`, enemy);
       res.json(enemy);
     } catch (error) {
       Logger.error('Error getting enemy:', error);

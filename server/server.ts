@@ -5,11 +5,13 @@ import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 
 import { ColorLogger as Logger } from "../utilities/colorLogger";
-import MainDbModels from "./routes/mainDbModels";
-import playerRoutes from "./routes/player.routes";
-import enemyRoutes from "./routes/enemy.routes";
-import lootRoutes from "./routes/loot.routes";
-import gameRoutes from "./routes/game.routes";
+
+import MainDbModels from "./controllers/mainDbModels";
+
+import playerRoutes from "./controllers/player.controller";
+import enemyRoutes from "./controllers/enemy.controller";
+import lootRoutes from "./controllers/loot.controller";
+import gameRoutes from "./controllers/game.controller";
 
 // Load the OpenAPI spec (swagger.yaml)
 const swaggerDocument = YAML.load("./api/openapi.yaml");

@@ -7,9 +7,27 @@ class LootController {
   private dbModels: MainDbModels;
 
   constructor() {
+    Logger.debug(`LootController constructor`);
     this.dbModels = MainDbModels.getInstance();
     this.getLoots = this.getLoots.bind(this);
     this.getLoot = this.getLoot.bind(this);
+  }
+
+  async getLoots(req: Request, res: Response) {
+    try {
+      const loots = await this.dbModels.lootDAL.getAll();
+
+      if (!loots) {
+        buildError(404, 'Loots not found', res);
+        return;
+      }
+
+      Logger.debug(`Total Loots: ${loots.length}`);
+      res.json(loots);
+    } catch (error) {
+      Logger.error('Error getting loots:', error);
+      buildError(500, 'Internal server error', res);
+    }
   }
 
   async getLoot(req: Request, res: Response) {
@@ -22,25 +40,10 @@ class LootController {
         return;
       }
 
+      Logger.debug(`Loot`, loot);
       res.json(loot);
     } catch (error) {
       Logger.error('Error getting loot:', error);
-      buildError(500, 'Internal server error', res);
-    }
-  }
-
-  async getLoots(req: Request, res: Response) {
-    try {
-      const loots = await this.dbModels.lootDAL.getAll();
-
-      if (!loots) {
-        buildError(404, 'Loots not found', res);
-        return;
-      }
-
-      res.json(loots);
-    } catch (error) {
-      Logger.error('Error getting loots:', error);
       buildError(500, 'Internal server error', res);
     }
   }

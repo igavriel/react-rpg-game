@@ -27,8 +27,14 @@ class GameEnemyDbModel extends Model implements IGameEnemy {
 
 const gameEnemySequelize = (sequelize: Sequelize, game: typeof GameDbModel, enemy: typeof EnemyDbModel) => {
   GameEnemyDbModel.init({
-    gameId: { type: DataTypes.INTEGER, primaryKey: true, references: { model: game, key: 'id' } },
-    enemyId: { type: DataTypes.INTEGER, allowNull: false, references: { model: enemy, key: 'id' } },
+    gameId: { type: DataTypes.INTEGER, primaryKey: true,
+      references: { model: game, key: 'id' },
+      onDelete: "CASCADE"
+    },
+    enemyId: { type: DataTypes.INTEGER, allowNull: false,
+      references: { model: enemy, key: 'id' },
+      onDelete: "CASCADE"
+    },
   }, {
     sequelize,
     modelName: 'GameEnemy',

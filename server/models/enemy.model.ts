@@ -31,10 +31,13 @@ class EnemyDbModel extends Model implements IDbEnemy {
 const enemySequelize = (sequelize: Sequelize, character: typeof CharacterDbModel, loot: typeof LootDbModel) => {
   EnemyDbModel.init({
     id: { type: DataTypes.INTEGER, primaryKey: true,
-      references: { model: character, key: "id", }
+      references: { model: character, key: "id", },
+      onDelete: "CASCADE"
     },
     lootId: { type: DataTypes.INTEGER, allowNull: false,
-      references: { model: loot, key: "id" } },
+      references: { model: loot, key: "id" },
+      onDelete: "CASCADE"
+    },
   }, {
     sequelize,
     modelName: 'Enemy',

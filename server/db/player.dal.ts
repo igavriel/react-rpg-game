@@ -17,6 +17,8 @@ export class PlayerDAL extends CharacterDAL {
   // Create a new player
   async createPlayer(player: Omit<IPlayer, 'id'>): Promise<IPlayer> {
     try {
+      Logger.info(`Creating player:`, player);
+
       // First create the character part
       const newCharacter = await this.createCharacter(player);
 
@@ -26,6 +28,9 @@ export class PlayerDAL extends CharacterDAL {
         experience: player.experience,
         levelUpExperience: player.levelUpExperience
       });
+
+      Logger.info(`Created player:`, newPlayer);
+      Logger.info(`Created character:`, newCharacter);
 
       return {
         ...newCharacter,

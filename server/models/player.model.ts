@@ -33,7 +33,8 @@ class PlayerDbModel extends Model implements IDbPlayer {
 const playerSequelize = (sequelize: Sequelize, character: typeof CharacterDbModel) => {
   PlayerDbModel.init({
     id:                 { type: DataTypes.INTEGER, primaryKey: true,
-      references:       { model : character, key: "id", }
+      references:       { model : character, key: "id", },
+      onDelete:         "CASCADE"
     },
     experience:         { type: DataTypes.INTEGER, allowNull: false, validate: { min: 0 } },
     levelUpExperience:  { type: DataTypes.INTEGER, allowNull: false, validate: { min: 0 } },

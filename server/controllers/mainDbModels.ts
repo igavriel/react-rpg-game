@@ -1,20 +1,21 @@
 import baseDatabase from "../db/baseDatabase";
 import { ColorLogger as Logger } from "../../utilities/colorLogger";
+import { LootDbModel, lootSequelize } from "../models/loot.model";
 import { CharacterDbModel, characterSequelize } from "../models/character.model";
 import { PlayerDbModel, playerSequelize } from "../models/player.model";
-import { GameDbModel, gameSequelize } from "../models/game.model";
 import { EnemyDbModel, enemySequelize } from "../models/enemy.model";
-import { LootDbModel, lootSequelize } from "../models/loot.model";
+import { GameDbModel, gameSequelize } from "../models/game.model";
 import { GameEnemyDbModel, gameEnemySequelize } from "../models/gameEnemy.model";
 import { GameLootDbModel, gameLootSequelize } from "../models/gameLoot.model";
 
+import { LootDAL } from "../db/loot.dal";
 import { PlayerDAL } from "../db/player.dal";
 import { EnemyDAL } from "../db/enemy.dal";
-import { LootDAL } from "../db/loot.dal";
 import { GameDAL } from "../db/game.dal";
 
 class MainDbModels {
   private static instance: MainDbModels;
+
   private lootDb: typeof LootDbModel;
   private characterDb: typeof CharacterDbModel;
   private playerDb: typeof PlayerDbModel;

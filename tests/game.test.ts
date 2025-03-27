@@ -77,8 +77,14 @@ describe('Game Database Integration Tests', () => {
     });
 
     GameEnemyDbModel.init({
-      gameId: { type: DataTypes.INTEGER, primaryKey: true, references: { model: GameDbModel, key: 'id' } },
-      enemyId: { type: DataTypes.INTEGER, allowNull: false, references: { model: EnemyDbModel, key: 'id' } },
+      gameId: { type: DataTypes.INTEGER, primaryKey: true,
+        references: { model: GameDbModel, key: 'id' },
+        onDelete: "CASCADE"
+      },
+      enemyId: { type: DataTypes.INTEGER, allowNull: false,
+        references: { model: EnemyDbModel, key: 'id' },
+        onDelete: "CASCADE"
+      },
     }, {
       sequelize: testSequelize,
       modelName: 'GameEnemy',
@@ -98,8 +104,14 @@ describe('Game Database Integration Tests', () => {
     });
 
     GameLootDbModel.init({
-      gameId: { type: DataTypes.INTEGER, primaryKey: true, references: { model: GameDbModel, key: 'id' } },
-      lootId: { type: DataTypes.INTEGER, allowNull: false, references: { model: LootDbModel, key: 'id' } },
+      gameId: { type: DataTypes.INTEGER, primaryKey: true,
+        references: { model: GameDbModel, key: 'id' },
+        onDelete: "CASCADE"
+      },
+      lootId: { type: DataTypes.INTEGER, allowNull: false,
+        references: { model: LootDbModel, key: 'id' },
+        onDelete: "CASCADE"
+      },
     }, {
       sequelize: testSequelize,
       modelName: 'GameLoot',

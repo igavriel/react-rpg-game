@@ -73,10 +73,13 @@ paths:
         description: Number of enemies to create
         required: true
         content:
-          text/plain:
+          application/json:
             schema:
-              type: number
-            example: 10
+              type: object
+              properties:
+                enemies:
+                  type: number
+                  example: 10
       responses:
         '201':
           description: Game created successfully
@@ -449,13 +452,16 @@ paths:
       summary: Create a new player
       operationId: createPlayer
       requestBody:
-        required: true
+        description: The name of the player
+        required: false
         content:
-          text/plain:
+          application/json:
             schema:
-              type: string
-            example: "John Doe"
-
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
       responses:
         '201':
           description: Player created successfully

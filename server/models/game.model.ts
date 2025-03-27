@@ -32,7 +32,9 @@ const gameSequelize = (sequelize: Sequelize, player: typeof PlayerDbModel) => {
   GameDbModel.init({
     id:         { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     playerId:  { type: DataTypes.INTEGER, allowNull: false,
-      references: { model: player, key: 'id' } },
+      references: { model: player, key: 'id' },
+      onDelete: "CASCADE"
+    },
     score:      { type: DataTypes.INTEGER, allowNull: false, validate: { min: 0 } },
     date:       { type: DataTypes.DATE, allowNull: false },
   }, {

@@ -27,8 +27,14 @@ class GameLootDbModel extends Model implements IGameLoot {
 
 const gameLootSequelize = (sequelize: Sequelize, game: typeof GameDbModel, loot: typeof LootDbModel) => {
   GameLootDbModel.init({
-    gameId: { type: DataTypes.INTEGER, primaryKey: true, references: { model: game, key: 'id' } },
-    lootId: { type: DataTypes.INTEGER, allowNull: false, references: { model: loot, key: 'id' } },
+    gameId: { type: DataTypes.INTEGER, primaryKey: true,
+      references: { model: game, key: 'id' },
+      onDelete: "CASCADE"
+    },
+    lootId: { type: DataTypes.INTEGER, allowNull: false,
+      references: { model: loot, key: 'id' },
+      onDelete: "CASCADE"
+    },
   }, {
     sequelize,
     modelName: 'GameLoot',
