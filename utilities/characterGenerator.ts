@@ -6,12 +6,12 @@ import { RandomGenerator } from "./randomGenerator";
 export abstract class CharacterGenerator extends RandomGenerator {
   // Generate a random health
   protected generateHealth(): number {
-    return this.getRandomNumber(10, 50);
+    return this.getRandomInteger(10, 50);
   }
 
   // Generate a random attack power
   protected generateAttackPower(): number {
-    return this.getRandomNumber(5, 10);
+    return this.getRandomInteger(5, 10);
   }
 
   // Generate a random luck
@@ -21,7 +21,7 @@ export abstract class CharacterGenerator extends RandomGenerator {
 
   // Generate a random level
   protected generateLevel(): number {
-    return this.getRandomNumber(1, 5);
+    return this.getRandomInteger(1, 5);
   }
 }
 
@@ -35,8 +35,16 @@ export abstract class CharacterGenerator extends RandomGenerator {
 //   public randomPower(): number {
 //     return this.generateAttackPower();
 //   }
+//   public randomLuck(): number {
+//     return this.generateLuck();
+//   }
+//   public randomLevel(): number {
+//     return this.generateLevel();
+//   }
 // }
 // const generator = new gen();
-// console.log(generator.randomHP());
-// console.log(generator.randomPower());
+// console.log('HP:', generator.randomHP());
+// console.log('Power:', generator.randomPower());
+// console.log('Luck:', generator.randomLuck());
+// console.log('Level:', generator.randomLevel());
 ///////////////////////////////////////////////////////////////////////////////

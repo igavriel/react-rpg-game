@@ -33,7 +33,7 @@ export class LootGenerator extends RandomGenerator {
       level = 1;
     }
     // Base value between 10 and 50
-    const baseValue = this.getRandomNumber(10, 50);
+    const baseValue = this.getRandomInteger(10, 50);
     // Multiply by level to scale the value
     return baseValue * level;
   }

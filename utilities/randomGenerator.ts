@@ -9,7 +9,11 @@ export class RandomGenerator {
 
   // Generate a random number
   public getRandomNumber(min: number, max: number): number {
-    return Math.floor(Math.random() * (max - min)) + min;
+    return Math.random() * (max - min) + min;
+  }
+  // Generate a random integer
+  public getRandomInteger(min: number, max: number): number {
+    return Math.floor(this.getRandomNumber(min, max));
   }
 }
 
@@ -19,6 +23,9 @@ export class RandomGenerator {
 // const generator = new RandomGenerator();
 // for (let i = 0; i < 5; i++) {
 //   console.log(generator.getRandomElement(["apple", "banana", "cherry"]),
-//               generator.getRandomNumber(1, 10));
+//               generator.getRandomInteger(1, 10),
+//               generator.getRandomNumber(1, 10),
+//               generator.getRandomNumber(0.1, 0.8)
+//             );
 // }
 ///////////////////////////////////////////////////////////////////////////////

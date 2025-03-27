@@ -114,7 +114,7 @@ class GameManager {
       return false;
     }
 
-    let randomNumber = this.roundGenerator.getRandomNumber(1, 3);
+    let randomNumber = this.roundGenerator.getRandomInteger(1, 3);
     switch (randomNumber) {
       case 1:
         this.message += "Attack! ";
