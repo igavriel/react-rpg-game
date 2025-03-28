@@ -52,8 +52,9 @@ class PlayerController {
       let generator = new PlayerGenerator();
       let playerEntry = generator.generatePlayer();
 
-      if (name != null) {
-        playerEntry.name = name;
+      let nameTrimmed = name.trim();
+      if (nameTrimmed != null) {
+        playerEntry.name = nameTrimmed;
       }
       let playerEntryJson = JSON.parse(JSON.stringify(playerEntry));
       delete playerEntryJson.id;
