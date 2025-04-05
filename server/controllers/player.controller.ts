@@ -51,7 +51,7 @@ class PlayerController {
 
       let generator = new PlayerGenerator();
       let playerEntry = generator.generatePlayer();
-
+      // use given name if it exists
       if (name != null) {
         playerEntry.name = name;
       }
@@ -73,7 +73,7 @@ class PlayerController {
       await this.dbModels.playerDAL.deletePlayer(Number(id));
 
       Logger.debug(`Deleted player with ID: ${id}`);
-      res.status(204).send();
+      res.status(200).send();
     } catch (error) {
       Logger.error('Error deleting player:', error);
       buildError(500, 'Internal server error', res);

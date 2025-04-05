@@ -121,7 +121,21 @@ export class PlayerDAL extends CharacterDAL {
   async deletePlayer(id: number): Promise<boolean> {
     try {
       const deleted = await this.playerModel.destroy({ where: { id: id } });
-      return deleted > 0;
+      if (deleted > 0)
+      {
+        Logger.info(`Player with id ${id} deleted`);
+        const characterDeleted = await this.deleteCharacter(id);
+        if (characterDeleted)
+        {
+          Logger.info(`Character with id ${id} deleted`);
+        }
+        return true;
+      }
+      else
+      {
+        Logger.error(`Player with id ${id} not found`);
+        return false
+      }
     } catch (error) {
       Logger.error(`Failed to delete player ${id}: ${error}`);
       throw error;

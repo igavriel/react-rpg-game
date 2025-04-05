@@ -9,10 +9,8 @@ class GameController {
   constructor() {
     this.dbModels = MainDbModels.getInstance();
     this.getGames = this.getGames.bind(this);
+    this.getTopGames = this.getTopGames.bind(this);
     this.getGame = this.getGame.bind(this);
-    // this.createGame = this.createGame.bind(this);
-    // this.deleteGame = this.deleteGame.bind(this);
-    // this.attackEnemy = this.attackEnemy.bind(this);
     // this.defendAttack = this.defendAttack.bind(this);
     // this.escapeBattle = this.escapeBattle.bind(this);
     // this.endGame = this.endGame.bind(this);
@@ -64,13 +62,15 @@ class GameController {
     try {
       const { id } = req.params;
       const Game = await this.dbModels.gameDAL.getGameById(Number(id));
-
       if (!Game) {
         buildError(404, 'Game not found', res);
         return;
       }
 
-      res.json(Game);
+      const enemies = await this.dbModels.gameDAL.getEnemiesForGame(Number(id));
+      const loots = await this.dbModels.gameDAL.getLootForGame(Number(id));
+
+      res.json({ Game, enemies, loots });
     } catch (error) {
       Logger.error('Error getting Game:', error);
       buildError(500, 'Internal server error', res);
