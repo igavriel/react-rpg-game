@@ -5,6 +5,12 @@ import buildError from "../../utilities/buildError";
 import { MonsterGenerator } from "../../utilities/monsterGenerator";
 import { LootGenerator } from "../../utilities/lootGenerator";
 import { RandomGenerator } from "../../utilities/randomGenerator";
+import { convertEnemy, convertGame } from "../../utilities/convert";
+import { IPlayer } from "../models/player.model";
+import { IEnemy } from "../models/enemy.model";
+import { ILoot } from "../models/loot.model";
+import { IGame } from "../models/game.model";
+import { Game, Player, Character, Enemy, Loot } from "../../generated-server/api";
 
 class GameController {
   private dbModels: MainDbModels;
@@ -34,7 +40,13 @@ class GameController {
         buildError(404, "Games not found", res);
         return;
       }
-      res.json(games);
+      // Convert the games to the API format
+      let retVal : Game[] = [];
+      for (const game of games) {
+        let gameObj: Game = await this.dbModels.buildApiGame(game);
+        retVal.push(gameObj);
+      }
+      res.json(retVal);
     } catch (error) {
       Logger.error("GameController - Error getting games:", error);
       buildError(500, "Internal server error", res);
@@ -44,7 +56,14 @@ class GameController {
   async getTopGames(req: Request, res: Response) {
     try {
       const games = await this.dbModels.gameDAL.getTopGames();
-      res.json(games);
+
+      // Convert the games to the API format
+      let retVal : Game[] = [];
+      for (const game of games) {
+        let gameObj: Game = await this.dbModels.buildApiGame(game);
+        retVal.push(gameObj);
+      }
+      res.json(retVal);
     } catch (error) {
       Logger.error("GameController - Error getting top games:", error);
       buildError(500, "Internal server error", res);
@@ -87,7 +106,10 @@ class GameController {
           `GameController:Enemy[${i}] - Created loot ${loot.id} and monster ${monster.id} for game ${game.id}`
         );
       }
-      res.status(201).json(game);
+
+      // Convert the game to the API format
+      const retVal : Game = await this.dbModels.buildApiGame(game);
+      res.status(201).json(retVal);
     } catch (error) {
       Logger.error("GameController - Error creating game:", error);
       buildError(500, "Internal server error", res);
@@ -97,43 +119,15 @@ class GameController {
   async getGame(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const Game = await this.dbModels.gameDAL.getGameById(Number(id));
-      if (!Game) {
+      const game = await this.dbModels.gameDAL.getGameById(Number(id));
+      if (!game) {
         buildError(404, "Game not found", res);
         return;
       }
-      // Get player for the game
-      const player = await this.dbModels.playerDAL.getPlayerById(Game.playerId);
-      // Get enemies for the game
-      const enemiesRecords = await this.dbModels.gameDAL.getEnemiesForGame(
-        Number(id)
-      );
-      let enemies = [];
-      for (const enemy of enemiesRecords) {
-        const enemyData = await this.dbModels.enemyDAL.getEnemyById(
-          enemy.enemyId
-        );
-        if (!enemyData) {
-          Logger.warn(`GameController - Enemy not found: ${enemy.enemyId}`);
-          continue;
-        }
-        enemies.push(enemyData);
-      }
-      // Get loot for the game
-      const lootsRecords = await this.dbModels.gameDAL.getLootForGame(
-        Number(id)
-      );
-      const loots = [];
-      for (const loot of lootsRecords) {
-        const lootData = await this.dbModels.lootDAL.getById(loot.lootId);
-        if (!lootData) {
-          Logger.warn(`GameController - Loot not found: ${loot.lootId}`);
-          continue;
-        }
-        loots.push(lootData);
-      }
-      // Return the game, enemies, and loot
-      res.json({ Game, player, enemies, loots });
+
+      // Convert the game to the API format
+      const retVal: Game = await this.dbModels.buildApiGame(game);
+      res.json(retVal);
     } catch (error) {
       Logger.error("GameController - Error getting Game:", error);
       buildError(500, "Internal server error", res);
@@ -154,8 +148,10 @@ class GameController {
   async addEnemyToGame(req: Request, res: Response) {
     try {
       const { id, enemyId } = req.params;
-      const game = await this.dbModels.gameDAL.addEnemyToGame(Number(id), Number(enemyId));
-      res.json(game);
+      const gameEnemy = await this.dbModels.gameDAL.addEnemyToGame(Number(id), Number(enemyId));
+
+      const retVal: Enemy = await this.dbModels.buildGameEnemy(gameEnemy);
+      res.json(retVal);
     } catch (error) {
       Logger.error('GameController - Error adding enemy to game:', error);
       buildError(500, 'Internal server error', res);

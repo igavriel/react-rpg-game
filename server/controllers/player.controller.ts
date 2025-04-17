@@ -3,6 +3,8 @@ import { ColorLogger as Logger } from '../../utilities/colorLogger';
 import MainDbModels from "./mainDbModels";
 import buildError from "../../utilities/buildError";
 import { PlayerGenerator } from "../../utilities/playerGenerator";
+import { Player } from "../../generated-server/api";
+import { convertPlayer } from "../../utilities/convert";
 
 class PlayerController {
   private dbModels: MainDbModels;
@@ -19,9 +21,14 @@ class PlayerController {
   async getPlayers(req: Request, res: Response) {
     try {
       const players = await this.dbModels.playerDAL.getAllPlayers();
-
       Logger.info(`PlayerController - Total Players: ${players.length}`);
-      res.json(players);
+
+      const retVal : Player[] = [];
+      for (const player of players) {
+        const playerData = convertPlayer(player);
+        retVal.push(playerData);
+      }
+      res.json(retVal);
     } catch (error) {
       Logger.error("PlayerController - Error getting players:", error);
       buildError(500, 'Internal server error', res);
@@ -38,7 +45,9 @@ class PlayerController {
         }
 
         Logger.info(`PlayerController - Player: ${player}`);
-        res.json(player);
+
+        const retVal: Player = convertPlayer(player);
+        res.json(retVal);
     } catch (error) {
       Logger.error("PlayerController - Error getting player:", error);
       buildError(500, 'Internal server error', res);
@@ -64,7 +73,9 @@ class PlayerController {
       );
 
       Logger.info(`PlayerController - Created player:`, player);
-      res.status(201).json(player);
+
+      const retVal: Player = convertPlayer(player);
+      res.status(201).json(retVal);
     } catch (error) {
       Logger.error("PlayerController - Error creating player:", error);
       buildError(500, 'Internal server error', res);

@@ -2,6 +2,7 @@ import { Router, Request, Response, RequestHandler } from "express";
 import { ColorLogger as Logger } from '../../utilities/colorLogger';
 import MainDbModels from "../controllers/mainDbModels";
 import buildError from "../../utilities/buildError";
+import { Enemy } from "../../generated-server/api";
 
 class EnemyController {
   private dbModels: MainDbModels;
@@ -17,7 +18,14 @@ class EnemyController {
     try {
       const enemies = await this.dbModels.enemyDAL.getAllEnemies();
       Logger.info(`EnemyController - Total enemies: ${enemies.length}`);
-      res.json(enemies);
+
+      const retVal : Enemy[] = [];
+      for (const enemy of enemies) {
+        const enemyData = await this.dbModels.buildEnemy(enemy);
+        retVal.push(enemyData);
+      }
+
+      res.json(retVal);
     } catch (error) {
       Logger.error("EnemyController - Error getting enemies:", error);
       buildError(500, "Internal server error", res);
@@ -34,7 +42,8 @@ class EnemyController {
       }
 
       Logger.info(`EnemyController - Enemy`, enemy);
-      res.json(enemy);
+      const retVal = await this.dbModels.buildEnemy(enemy);
+      res.json(retVal);
     } catch (error) {
       Logger.error("EnemyController - Error getting enemy:", error);
       buildError(500, "Internal server error", res);
