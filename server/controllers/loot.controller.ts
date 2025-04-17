@@ -22,10 +22,10 @@ class LootController {
         return;
       }
 
-      Logger.debug(`Total Loots: ${loots.length}`);
+      Logger.info(`LootController - Total Loots: ${loots.length}`);
       res.json(loots);
     } catch (error) {
-      Logger.error('Error getting loots:', error);
+      Logger.error("LootController - Error getting loots:", error);
       buildError(500, 'Internal server error', res);
     }
   }
@@ -40,10 +40,10 @@ class LootController {
         return;
       }
 
-      Logger.debug(`Loot`, loot);
+      Logger.info(`LootController - Loot`, loot);
       res.json(loot);
     } catch (error) {
-      Logger.error('Error getting loot:', error);
+      Logger.error("LootController - Error getting loot:", error);
       buildError(500, 'Internal server error', res);
     }
   }

@@ -31,7 +31,7 @@ const gameEnemySequelize = (sequelize: Sequelize, game: typeof GameDbModel, enem
       references: { model: game, key: 'id' },
       onDelete: "CASCADE"
     },
-    enemyId: { type: DataTypes.INTEGER, allowNull: false,
+    enemyId: { type: DataTypes.INTEGER, primaryKey: true,
       references: { model: enemy, key: 'id' },
       onDelete: "CASCADE"
     },

@@ -18,7 +18,7 @@ export class LootDAL {
       const newLoot = await this.dbModel.create(loot);
       return newLoot.toJSON();
     } catch (error) {
-      Logger.error(`Failed to create loot: ${error}`);
+      Logger.error(`LootDAL:create - Failed to create loot: ${error}`);
       throw error;
     }
   }
@@ -29,7 +29,7 @@ export class LootDAL {
       const loot = await this.dbModel.findByPk(id);
       return loot?.toJSON() || null;
     } catch (error) {
-      Logger.error(`Failed to get loot by id ${id}: ${error}`);
+      Logger.error(`LootDAL:getById - Failed to get loot by id ${id}: ${error}`);
       throw error;
     }
   }
@@ -40,7 +40,7 @@ export class LootDAL {
       const loots = await this.dbModel.findAll();
       return loots.map(loot => loot.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get all loot: ${error}`);
+      Logger.error(`LootDAL:getAll - Failed to get all loot: ${error}`);
       throw error;
     }
   }
@@ -54,7 +54,7 @@ export class LootDAL {
       });
 
     } catch (error) {
-      Logger.error(`Failed to update loot ${id}: ${error}`);
+      Logger.error(`LootDAL:update - Failed to update loot ${id}: ${error}`);
       throw error;
     }
   }
@@ -65,9 +65,16 @@ export class LootDAL {
       const deleted = await this.dbModel.destroy({
         where: { id }
       });
-      return deleted > 0;
+      if (deleted > 0) {
+        Logger.debug(`LootDAL:delete - Loot with id ${id} deleted`);
+        return true;
+      }
+      else {
+        Logger.warn(`LootDAL:delete - Loot with id ${id} not found`);
+        return false;
+      }
     } catch (error) {
-      Logger.error(`Failed to delete loot ${id}: ${error}`);
+      Logger.error(`LootDAL:delete - Failed to delete loot ${id}: ${error}`);
       throw error;
     }
   }
@@ -84,7 +91,7 @@ export class LootDAL {
       });
       return loots.map(loot => loot.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get loot by value range ${minValue}-${maxValue}: ${error}`);
+      Logger.error(`LootDAL:getByValueRange - Failed to get loot by value range ${minValue}-${maxValue}: ${error}`);
       throw error;
     }
   }
@@ -101,7 +108,7 @@ export class LootDAL {
       });
       return loots.map(loot => loot.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get loot by name ${name}: ${error}`);
+      Logger.error(`LootDAL:getByName - Failed to get loot by name ${name}: ${error}`);
       throw error;
     }
   }

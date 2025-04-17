@@ -31,7 +31,7 @@ const gameLootSequelize = (sequelize: Sequelize, game: typeof GameDbModel, loot:
       references: { model: game, key: 'id' },
       onDelete: "CASCADE"
     },
-    lootId: { type: DataTypes.INTEGER, allowNull: false,
+    lootId: { type: DataTypes.INTEGER, primaryKey: true,
       references: { model: loot, key: 'id' },
       onDelete: "CASCADE"
     },

@@ -16,11 +16,11 @@ class EnemyController {
   async getEnemies(req: Request, res: Response) {
     try {
       const enemies = await this.dbModels.enemyDAL.getAllEnemies();
-      Logger.debug(`Total enemies: ${enemies.length}`);
+      Logger.info(`EnemyController - Total enemies: ${enemies.length}`);
       res.json(enemies);
     } catch (error) {
-      Logger.error('Error getting enemies:', error);
-      buildError(500, 'Internal server error', res);
+      Logger.error("EnemyController - Error getting enemies:", error);
+      buildError(500, "Internal server error", res);
     }
   }
 
@@ -29,15 +29,15 @@ class EnemyController {
       const { id } = req.params;
       const enemy = await this.dbModels.enemyDAL.getEnemyById(Number(id));
       if (!enemy) {
-        buildError(404, 'Enemy not found', res);
+        buildError(404, "Enemy not found", res);
         return;
       }
 
-      Logger.debug(`Enemy`, enemy);
+      Logger.info(`EnemyController - Enemy`, enemy);
       res.json(enemy);
     } catch (error) {
-      Logger.error('Error getting enemy:', error);
-      buildError(500, 'Internal server error', res);
+      Logger.error("EnemyController - Error getting enemy:", error);
+      buildError(500, "Internal server error", res);
     }
   }
 }
@@ -46,8 +46,8 @@ const router = Router();
 const enemyController = new EnemyController();
 
 // Get all enemies
-router.get('/', enemyController.getEnemies as RequestHandler);
+router.get("/", enemyController.getEnemies as RequestHandler);
 // Get specific enemy by ID
-router.get('/:id', enemyController.getEnemy as RequestHandler);
+router.get("/:id", enemyController.getEnemy as RequestHandler);
 
 export default router;

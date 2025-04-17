@@ -20,10 +20,10 @@ class PlayerController {
     try {
       const players = await this.dbModels.playerDAL.getAllPlayers();
 
-      Logger.debug(`Total Players: ${players.length}`);
+      Logger.info(`PlayerController - Total Players: ${players.length}`);
       res.json(players);
     } catch (error) {
-      Logger.error('Error getting players:', error);
+      Logger.error("PlayerController - Error getting players:", error);
       buildError(500, 'Internal server error', res);
     }
   }
@@ -37,10 +37,10 @@ class PlayerController {
           return;
         }
 
-        Logger.debug(`Player: ${player}`);
+        Logger.info(`PlayerController - Player: ${player}`);
         res.json(player);
     } catch (error) {
-      Logger.error('Error getting player:', error);
+      Logger.error("PlayerController - Error getting player:", error);
       buildError(500, 'Internal server error', res);
     }
   }
@@ -52,18 +52,21 @@ class PlayerController {
       let generator = new PlayerGenerator();
       let playerEntry = generator.generatePlayer();
 
-      let nameTrimmed = name.trim();
+      let nameTrimmed = typeof name === "string" ? name.trim() : null;
       if (nameTrimmed != null) {
         playerEntry.name = nameTrimmed;
       }
+      // Delete the 'id' field before creating the db object to prevent a SequelizeUniqueConstraintError
       let playerEntryJson = JSON.parse(JSON.stringify(playerEntry));
       delete playerEntryJson.id;
-      const player = await this.dbModels.playerDAL.createPlayer(playerEntryJson);
+      const player = await this.dbModels.playerDAL.createPlayer(
+        playerEntryJson
+      );
 
-      Logger.info(`Created player:`, player);
+      Logger.info(`PlayerController - Created player:`, player);
       res.status(201).json(player);
     } catch (error) {
-      Logger.error('Error creating player:', error);
+      Logger.error("PlayerController - Error creating player:", error);
       buildError(500, 'Internal server error', res);
     }
   }
@@ -73,10 +76,10 @@ class PlayerController {
       const { id } = req.params;
       await this.dbModels.playerDAL.deletePlayer(Number(id));
 
-      Logger.debug(`Deleted player with ID: ${id}`);
+      Logger.info(`PlayerController - Deleted player with ID: ${id}`);
       res.status(200).send();
     } catch (error) {
-      Logger.error('Error deleting player:', error);
+      Logger.error("PlayerController - Error deleting player:", error);
       buildError(500, 'Internal server error', res);
     }
   }

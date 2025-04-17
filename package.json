@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "RPG Game API using TypeScript and OpenAPI",
   "scripts": {
-    "build": "tsc",
+    "build": "npx tsc",
     "start": "node dist/server/server.js",
     "generate": "npx @openapitools/openapi-generator-cli generate -g typescript-node -i ./api/openapi.yaml -o ./generated-server",
     "dev:ts": "nodemon --watch '**/*.ts' --ext ts --ignore 'dist/**' --ignore 'node_modules/**' --exec \"ts-node server/server.ts\"",
@@ -44,6 +44,6 @@
     "supertest": "^7.1.0",
     "ts-jest": "^29.2.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }

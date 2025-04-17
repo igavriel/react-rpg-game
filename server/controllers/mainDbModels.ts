@@ -46,7 +46,7 @@ class MainDbModels {
 
   public static getInstance(): MainDbModels {
     if (!MainDbModels.instance) {
-      Logger.info('Creating new MainDbModels instance');
+      Logger.info("MainDbModels - Creating new MainDbModels instance");
       MainDbModels.instance = new MainDbModels();
     }
     return MainDbModels.instance;
@@ -57,18 +57,18 @@ class MainDbModels {
       // Authenticate and sync database
       await baseDatabase.authenticate();
       await baseDatabase.sync({ force: false }); // Create tables if not exists
-      Logger.info('Database connection established');
+      Logger.info("MainDbModels - Database connection established");
     } catch (error) {
-      Logger.error('Database connection failed:', error);
+      Logger.error("MainDbModels - Database connection failed:", error);
     }
   }
 
   async closeConnection() {
     try {
       await baseDatabase.close();
-      Logger.info('Database connection closed');
+      Logger.info("MainDbModels - Database connection closed");
     } catch (error) {
-      Logger.error('Database connection close failed:', error);
+      Logger.error("MainDbModels - Database connection close failed:", error);
     }
   }
 }

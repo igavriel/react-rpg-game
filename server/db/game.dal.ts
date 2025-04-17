@@ -25,10 +25,12 @@ export class GameDAL {
   // Create a new game
   async createGame(playerId: number): Promise<IGame> {
     try {
+      Logger.debug(`GameDAL:createGame - Creating game for player ${playerId}`);
       const newGame = await this.gameModel.create({ playerId, score: 0, date: new Date() });
+      Logger.debug(`GameDAL:createGame - Game created with ID: ${newGame.id}`);
       return newGame.toJSON();
     } catch (error) {
-      Logger.error(`Failed to create game: ${error}`);
+      Logger.error(`GameDAL:createGame - Failed to create game: ${error}`);
       throw error;
     }
   }
@@ -39,7 +41,7 @@ export class GameDAL {
       const game = await this.gameModel.findByPk(id);
       return game?.toJSON() || null;
     } catch (error) {
-      Logger.error(`Failed to get game by id ${id}: ${error}`);
+      Logger.error(`GameDAL:getGameById - Failed to get game by id ${id}: ${error}`);
       throw error;
     }
   }
@@ -50,7 +52,7 @@ export class GameDAL {
       const games = await this.gameModel.findAll();
       return games.map(game => game.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get all games: ${error}`);
+      Logger.error(`GameDAL:getAllGames - Failed to get all games: ${error}`);
       throw error;
     }
   }
@@ -68,7 +70,7 @@ export class GameDAL {
       }
       return null;
     } catch (error) {
-      Logger.error(`Failed to update game ${id}: ${error}`);
+      Logger.error(`GameDAL:updateGame - Failed to update game ${id}: ${error}`);
       throw error;
     }
   }
@@ -79,9 +81,16 @@ export class GameDAL {
       const deleted = await this.gameModel.destroy({
         where: { id }
       });
-      return deleted > 0;
+      if (deleted > 0) {
+        Logger.debug(`GameDAL:deleteGame - Game with id ${id} deleted`);
+        return true
+      }
+      else {
+        Logger.warn(`GameDAL:deleteGame - Game with id ${id} not found`);
+        return false;
+      }
     } catch (error) {
-      Logger.error(`Failed to delete game ${id}: ${error}`);
+      Logger.error(`GameDAL:deleteGame - Failed to delete game ${id}: ${error}`);
       throw error;
     }
   }
@@ -94,7 +103,7 @@ export class GameDAL {
       });
       return games.map(game => game.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get games for player ${playerId}: ${error}`);
+      Logger.error(`GameDAL:getGamesByPlayerId - Failed to get games for player ${playerId}: ${error}`);
       throw error;
     }
   }
@@ -108,7 +117,7 @@ export class GameDAL {
       });
       return games.map(game => game.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get top ${limit} games: ${error}`);
+      Logger.error(`GameDAL:getTopGames - Failed to get top ${limit} games: ${error}`);
       throw error;
     }
   }
@@ -116,10 +125,11 @@ export class GameDAL {
   // Game-Enemy relationship methods
   async addEnemyToGame(gameId: number, enemyId: number): Promise<IGameEnemy> {
     try {
+      Logger.debug(`GameDAL:addEnemyToGame - Adding enemy ${enemyId} to game ${gameId}`);
       const gameEnemy = await this.gameEnemyModel.create({ gameId, enemyId });
       return gameEnemy.toJSON();
     } catch (error) {
-      Logger.error(`Failed to add enemy ${enemyId} to game ${gameId}: ${error}`);
+      Logger.error(`GameDAL:addEnemyToGame - Failed to add enemy ${enemyId} to game ${gameId}: ${error}`);
       throw error;
     }
   }
@@ -131,7 +141,7 @@ export class GameDAL {
       });
       return gameEnemies.map(ge => ge.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get enemies for game ${gameId}: ${error}`);
+      Logger.error(`GameDAL:getEnemiesForGame - Failed to get enemies for game ${gameId}: ${error}`);
       throw error;
     }
   }
@@ -141,9 +151,15 @@ export class GameDAL {
       const deleted = await this.gameEnemyModel.destroy({
         where: { gameId, enemyId }
       });
-      return deleted > 0;
+      if (deleted > 0) {
+        Logger.debug(`GameDAL:removeEnemyFromGame - Enemy ${enemyId} removed from game ${gameId}`);
+        return true;
+      } else {
+        Logger.error(`GameDAL:removeEnemyFromGame - Enemy ${enemyId} not found in game ${gameId}`);
+        return false;
+      }
     } catch (error) {
-      Logger.error(`Failed to remove enemy ${enemyId} from game ${gameId}: ${error}`);
+      Logger.error(`GameDAL:removeEnemyFromGame - Failed to remove enemy ${enemyId} from game ${gameId}: ${error}`);
       throw error;
     }
   }
@@ -154,7 +170,7 @@ export class GameDAL {
       const gameLoot = await this.gameLootModel.create({ gameId, lootId });
       return gameLoot.toJSON();
     } catch (error) {
-      Logger.error(`Failed to add loot ${lootId} to game ${gameId}: ${error}`);
+      Logger.error(`GameDAL:addLootToGame - Failed to add loot ${lootId} to game ${gameId}: ${error}`);
       throw error;
     }
   }
@@ -166,7 +182,7 @@ export class GameDAL {
       });
       return gameLoot.map(gl => gl.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get loot for game ${gameId}: ${error}`);
+      Logger.error(`GameDAL:getLootForGame - Failed to get loot for game ${gameId}: ${error}`);
       throw error;
     }
   }
@@ -176,9 +192,15 @@ export class GameDAL {
       const deleted = await this.gameLootModel.destroy({
         where: { gameId, lootId }
       });
-      return deleted > 0;
+      if (deleted > 0) {
+        Logger.debug(`GameDAL:removeLootFromGame - Loot ${lootId} removed from game ${gameId}`);
+        return true;
+      } else {
+        Logger.error(`GameDAL:removeLootFromGame - Loot ${lootId} not found in game ${gameId}`);
+        return false;
+      }
     } catch (error) {
-      Logger.error(`Failed to remove loot ${lootId} from game ${gameId}: ${error}`);
+      Logger.error(`GameDAL:removeLootFromGame - Failed to remove loot ${lootId} from game ${gameId}: ${error}`);
       throw error;
     }
   }
@@ -229,10 +251,9 @@ export class GameDAL {
 //     return;
 //   }
 //   const player = players[0];
-//   const gameEntry = { playerId: player.id, score: 100, date: new Date() }
 
 //   // Create a new game
-//   const game = await gameDAL.createGame(gameEntry);
+//   const game = await gameDAL.createGame(player.id);
 //   Logger.info('Created game:', game);
 
 //   const enemies = await enemyDAL.getAllEnemies();

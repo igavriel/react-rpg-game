@@ -18,7 +18,7 @@ export abstract class CharacterDAL {
       const newCharacter = await this.dbModel.create(character);
       return newCharacter.toJSON();
     } catch (error) {
-      Logger.error(`Failed to create character: ${error}`);
+      Logger.error(`CharacterDAL:createCharacter - Failed to create character: ${error}`);
       throw error;
     }
   }
@@ -29,7 +29,7 @@ export abstract class CharacterDAL {
       const character = await this.dbModel.findByPk(id);
       return character?.toJSON() || null;
     } catch (error) {
-      Logger.error(`Failed to get character by id ${id}: ${error}`);
+      Logger.error(`CharacterDAL:getCharacterById - Failed to get character by id ${id}: ${error}`);
       throw error;
     }
   }
@@ -40,7 +40,7 @@ export abstract class CharacterDAL {
       const characters = await this.dbModel.findAll();
       return characters.map(character => character.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get all characters: ${error}`);
+      Logger.error(`CharacterDAL:getAllCharacters - Failed to get all characters: ${error}`);
       throw error;
     }
   }
@@ -58,7 +58,7 @@ export abstract class CharacterDAL {
       }
       return null;
     } catch (error) {
-      Logger.error(`Failed to update character ${id}: ${error}`);
+      Logger.error(`CharacterDAL:updateCharacter - Failed to update character ${id}: ${error}`);
       throw error;
     }
   }
@@ -69,9 +69,15 @@ export abstract class CharacterDAL {
       const deleted = await this.dbModel.destroy({
         where: { id }
       });
-      return deleted > 0;
+      if (deleted > 0) {
+        Logger.debug(`CharacterDAL:deleteCharacter - Character with id ${id} deleted`);
+        return true;
+      } else {
+        Logger.warn(`CharacterDAL:deleteCharacter - Character with id ${id} not found`);
+        return false;
+      }
     } catch (error) {
-      Logger.error(`Failed to delete character ${id}: ${error}`);
+      Logger.error(`CharacterDAL:deleteCharacter - Failed to delete character ${id}: ${error}`);
       throw error;
     }
   }
@@ -88,7 +94,7 @@ export abstract class CharacterDAL {
       });
       return characters.map(character => character.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get characters by level range ${minLevel}-${maxLevel}: ${error}`);
+      Logger.error(`CharacterDAL:getCharacterByLevelRange - Failed to get characters by level range ${minLevel}-${maxLevel}: ${error}`);
       throw error;
     }
   }
@@ -105,7 +111,7 @@ export abstract class CharacterDAL {
       });
       return characters.map(character => character.toJSON());
     } catch (error) {
-      Logger.error(`Failed to get characters by name ${name}: ${error}`);
+      Logger.error(`CharacterDAL:getCharacterByName - Failed to get characters by name ${name}: ${error}`);
       throw error;
     }
   }

@@ -31,7 +31,7 @@ export class EnemyDAL extends CharacterDAL {
         lootId: newEnemy.lootId
       };
     } catch (error) {
-      Logger.error(`Failed to create enemy with loot: ${error}`);
+      Logger.error(`EnemyDAL:createEnemy - Failed to create enemy with loot: ${error}`);
       throw error;
     }
   }
@@ -41,13 +41,13 @@ export class EnemyDAL extends CharacterDAL {
     try {
       const enemy = await this.enemyModel.findByPk(id);
       if (!enemy) {
-        Logger.error(`Enemy with id ${id} not found`);
+        Logger.error(`EnemyDAL:getEnemyById - Enemy with id ${id} not found`);
         return null;
       }
 
       const character = await this.getCharacterById(id);
       if (!character) {
-        Logger.error(`Character with id ${id} not found`);
+        Logger.error(`EnemyDAL:getEnemyById - Character with id ${id} not found`);
         return null;
       }
 
@@ -56,7 +56,7 @@ export class EnemyDAL extends CharacterDAL {
         lootId: enemy.lootId
       };
     } catch (error) {
-      Logger.error(`Failed to get enemy by id ${id} with loot: ${error}`);
+      Logger.error(`EnemyDAL:getEnemyById - Failed to get enemy by id ${id}: ${error}`);
       throw error;
     }
   }
@@ -70,7 +70,7 @@ export class EnemyDAL extends CharacterDAL {
       return enemies.map(enemy => {
         const character = characters.find(c => c.id === enemy.id);
         if (!character) {
-          Logger.error(`Character with id ${enemy.id} not found`);
+          Logger.error(`EnemyDAL:getAllEnemies - Character with id ${enemy.id} not found`);
           return null;
         }
 
@@ -80,7 +80,7 @@ export class EnemyDAL extends CharacterDAL {
         };
       }).filter((enemy): enemy is IEnemy => enemy !== null);
     } catch (error) {
-      Logger.error(`Failed to get all enemies with loot: ${error}`);
+      Logger.error(`EnemyDAL:getAllEnemies - Failed to get all enemies with loot: ${error}`);
       throw error;
     }
   }
@@ -96,7 +96,7 @@ export class EnemyDAL extends CharacterDAL {
       return enemies.map(enemy => {
         const character = characters.find(c => c.id === enemy.id);
         if (!character) {
-          Logger.error(`Character with id ${enemy.id} not found`);
+          Logger.error(`EnemyDAL:getEnemiesByLootId - Character with id ${enemy.id} not found`);
           return null;
         }
 
@@ -106,7 +106,7 @@ export class EnemyDAL extends CharacterDAL {
         };
       }).filter((enemy): enemy is IEnemy => enemy !== null);
     } catch (error) {
-      Logger.error(`Failed to get enemies by loot id ${lootId}: ${error}`);
+      Logger.error(`EnemyDAL:getEnemiesByLootId - Failed to get enemies by loot id ${lootId}: ${error}`);
       throw error;
     }
   }
@@ -120,7 +120,7 @@ export class EnemyDAL extends CharacterDAL {
       );
       return updated > 0;
     } catch (error) {
-      Logger.error(`Failed to update enemy ${id} loot: ${error}`);
+      Logger.error(`EnemyDAL:updateEnemyLoot - Failed to update enemy ${id} loot: ${error}`);
       throw error;
     }
   }
@@ -129,9 +129,15 @@ export class EnemyDAL extends CharacterDAL {
   async deleteEnemy(id: number): Promise<boolean> {
     try {
       const deleted = await this.enemyModel.destroy({ where: { id } });
-      return deleted > 0;
+      if (deleted > 0) {
+        Logger.debug(`EnemyDAL:deleteEnemy - Enemy with id ${id} deleted successfully`);
+        return true;
+      } else {
+        Logger.warn(`EnemyDAL:deleteEnemy - Enemy with id ${id} not found`);
+        return false;
+      }
     } catch (error) {
-      Logger.error(`Failed to delete enemy ${id}: ${error}`);
+      Logger.error(`EnemyDAL:deleteEnemy - Failed to delete enemy ${id}: ${error}`);
       throw error;
     }
   }

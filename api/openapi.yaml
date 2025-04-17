@@ -11,6 +11,8 @@ servers:
 tags:
   - name: games
     description: Game management
+  - name: gameplay
+    description: Gameplay actions
   - name: players
     description: Player management
   - name: enemies
@@ -77,6 +79,9 @@ paths:
             schema:
               type: object
               properties:
+                player_id:
+                  type: integer
+                  example: 1
                 enemies:
                   type: number
                   example: 10
@@ -143,7 +148,7 @@ paths:
           type: integer
     post:
       tags:
-        - games
+        - gameplay
       summary: Player attacks an enemy
       operationId: attackEnemy
       responses:
@@ -175,7 +180,7 @@ paths:
           type: integer
     post:
       tags:
-        - games
+        - gameplay
       summary: Player defends against an attack
       operationId: defendAttack
       responses:
@@ -207,7 +212,7 @@ paths:
           type: integer
     post:
       tags:
-        - games
+        - gameplay
       summary: Player attempts to escape
       operationId: escapeBattle
       responses:
@@ -239,7 +244,7 @@ paths:
           type: integer
     post:
       tags:
-        - games
+        - gameplay
       summary: End the game
       operationId: endGame
       responses:
@@ -265,7 +270,7 @@ paths:
           type: integer
     get:
       tags:
-        - games
+        - gameplay
       summary: Get the current enemy in a game
       operationId: getCurrentEnemy
       responses:
@@ -336,7 +341,7 @@ paths:
           type: integer
     get:
       tags:
-        - games
+        - gameplay
       summary: Get loots earned in the game
       operationId: getGameLoot
       responses:

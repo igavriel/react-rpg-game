@@ -4,7 +4,7 @@ import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import YAML from "yamljs";
 
-import { ColorLogger as Logger } from "../utilities/colorLogger";
+import { ColorLogger as Logger, LogLevel } from "../utilities/colorLogger";
 
 import MainDbModels from "./controllers/mainDbModels";
 
@@ -43,6 +43,8 @@ dbModels.openConnection().catch(error => {
 app.listen(port, () => {
   Logger.info(`Server is running on port ${port}`);
   Logger.info(`Swagger UI available at http://localhost:${port}/swagger`);
+  // Set log level to DEBUG for detailed logging
+  Logger.setLevel(LogLevel.DEBUG);
 });
 
 // Handle graceful shutdown

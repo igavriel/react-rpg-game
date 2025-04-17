@@ -33,7 +33,7 @@ export class PlayerDAL extends CharacterDAL {
         levelUpExperience: newPlayer.levelUpExperience
       };
     } catch (error) {
-      Logger.error(`Failed to create player: ${error}`);
+      Logger.error(`PlayerDAL:createPlayer - Failed to create player: ${error}`);
       throw error;
     }
   }
@@ -43,13 +43,13 @@ export class PlayerDAL extends CharacterDAL {
     try {
       const player = await this.playerModel.findByPk(id);
       if (!player) {
-        Logger.error(`Player with id ${id} not found`);
+        Logger.error(`PlayerDAL:getPlayerById - Player with id ${id} not found`);
         return null;
       }
 
       const character = await this.getCharacterById(id);
       if (!character) {
-        Logger.error(`Character with id ${id} not found`);
+        Logger.error(`PlayerDAL:getPlayerById - Character with id ${id} not found`);
         return null;
       }
 
@@ -59,7 +59,7 @@ export class PlayerDAL extends CharacterDAL {
         levelUpExperience: player.levelUpExperience
       };
     } catch (error) {
-      Logger.error(`Failed to get player by id ${id}: ${error}`);
+      Logger.error(`PlayerDAL:getPlayerById - Failed to get player by id ${id}: ${error}`);
       throw error;
     }
   }
@@ -73,7 +73,7 @@ export class PlayerDAL extends CharacterDAL {
       return players.map(player => {
         const character = characters.find(c => c.id === player.id);
         if (!character) {
-          Logger.error(`Character with id ${player.id} not found`);
+          Logger.error(`PlayerDAL:getAllPlayers - Character with id ${player.id} not found`);
           return null;
         }
 
@@ -84,7 +84,7 @@ export class PlayerDAL extends CharacterDAL {
         };
       }).filter((player): player is IPlayer => player !== null);
     } catch (error) {
-      Logger.error(`Failed to get all players: ${error}`);
+      Logger.error(`PlayerDAL:getAllPlayers - Failed to get all players: ${error}`);
       throw error;
     }
   }
@@ -98,7 +98,7 @@ export class PlayerDAL extends CharacterDAL {
       );
       return updated > 0;
     } catch (error) {
-      Logger.error(`Failed to update player ${id} experience: ${error}`);
+      Logger.error(`PlayerDAL:updatePlayerExperience - Failed to update player ${id} experience: ${error}`);
       throw error;
     }
   }
@@ -112,7 +112,7 @@ export class PlayerDAL extends CharacterDAL {
       );
       return updated > 0;
     } catch (error) {
-      Logger.error(`Failed to update player ${id} level up experience: ${error}`);
+      Logger.error(`PlayerDAL:updatePlayerLevelUpExperience - Failed to update player ${id} level up experience: ${error}`);
       throw error;
     }
   }
@@ -123,21 +123,21 @@ export class PlayerDAL extends CharacterDAL {
       const deleted = await this.playerModel.destroy({ where: { id: id } });
       if (deleted > 0)
       {
-        Logger.info(`Player with id ${id} deleted`);
+        Logger.debug(`PlayerDAL:deletePlayer - Player with id ${id} deleted`);
         const characterDeleted = await this.deleteCharacter(id);
         if (characterDeleted)
         {
-          Logger.info(`Character with id ${id} deleted`);
+          Logger.debug(`PlayerDAL:deletePlayer - Character with id ${id} deleted`);
         }
         return true;
       }
       else
       {
-        Logger.error(`Player with id ${id} not found`);
+        Logger.warn(`PlayerDAL:deletePlayer - Player with id ${id} not found`);
         return false
       }
     } catch (error) {
-      Logger.error(`Failed to delete player ${id}: ${error}`);
+      Logger.error(`PlayerDAL:deletePlayer - Failed to delete player ${id}: ${error}`);
       throw error;
     }
   }
