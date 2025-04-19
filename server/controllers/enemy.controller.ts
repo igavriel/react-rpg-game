@@ -1,7 +1,8 @@
 import { Router, Request, Response, RequestHandler } from "express";
-import { ColorLogger as Logger } from '../../utilities/colorLogger';
+import { ColorLogger as Logger } from "../../utilities/colorLogger";
 import MainDbModels from "../controllers/mainDbModels";
 import buildError from "../../utilities/buildError";
+import { IEnemy } from "../models/enemy.model";
 import { Enemy } from "../../generated-server/api";
 
 class EnemyController {
@@ -16,12 +17,12 @@ class EnemyController {
 
   async getEnemies(req: Request, res: Response) {
     try {
-      const enemies = await this.dbModels.enemyDAL.getAllEnemies();
+      const enemies: IEnemy[] = await this.dbModels.enemyDAL.getAllEnemies();
       Logger.info(`EnemyController - Total enemies: ${enemies.length}`);
 
-      const retVal : Enemy[] = [];
+      const retVal: Enemy[] = [];
       for (const enemy of enemies) {
-        const enemyData = await this.dbModels.buildEnemy(enemy);
+        const enemyData = await this.dbModels.buildApiEnemy(enemy);
         retVal.push(enemyData);
       }
 
@@ -35,14 +36,14 @@ class EnemyController {
   async getEnemy(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const enemy = await this.dbModels.enemyDAL.getEnemyById(Number(id));
+      const enemy: IEnemy|null = await this.dbModels.enemyDAL.getEnemyById(Number(id));
       if (!enemy) {
         buildError(404, "Enemy not found", res);
         return;
       }
 
       Logger.info(`EnemyController - Enemy`, enemy);
-      const retVal = await this.dbModels.buildEnemy(enemy);
+      const retVal = await this.dbModels.buildApiEnemy(enemy);
       res.json(retVal);
     } catch (error) {
       Logger.error("EnemyController - Error getting enemy:", error);

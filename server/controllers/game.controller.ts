@@ -1,16 +1,10 @@
 import { Router, Request, Response, RequestHandler } from "express";
-import { ColorLogger as Logger } from '../../utilities/colorLogger';
+import { ColorLogger as Logger } from "../../utilities/colorLogger";
 import MainDbModels from "./mainDbModels";
 import buildError from "../../utilities/buildError";
-import { MonsterGenerator } from "../../utilities/monsterGenerator";
-import { LootGenerator } from "../../utilities/lootGenerator";
-import { RandomGenerator } from "../../utilities/randomGenerator";
-import { convertEnemy, convertGame } from "../../utilities/convert";
-import { IPlayer } from "../models/player.model";
-import { IEnemy } from "../models/enemy.model";
-import { ILoot } from "../models/loot.model";
 import { IGame } from "../models/game.model";
-import { Game, Player, Character, Enemy, Loot } from "../../generated-server/api";
+import { Game, Enemy } from "../../generated-server/api";
+import { IGameEnemy } from "../models/gameEnemy.model";
 
 class GameController {
   private dbModels: MainDbModels;
@@ -35,13 +29,13 @@ class GameController {
 
   async getGames(req: Request, res: Response) {
     try {
-      const games = await this.dbModels.gameDAL.getAllGames();
+      const games: IGame[] = await this.dbModels.gameDAL.getAllGames();
       if (!games) {
         buildError(404, "Games not found", res);
         return;
       }
       // Convert the games to the API format
-      let retVal : Game[] = [];
+      let retVal: Game[] = [];
       for (const game of games) {
         let gameObj: Game = await this.dbModels.buildApiGame(game);
         retVal.push(gameObj);
@@ -55,10 +49,14 @@ class GameController {
 
   async getTopGames(req: Request, res: Response) {
     try {
-      const games = await this.dbModels.gameDAL.getTopGames();
+      const games: IGame[] = await this.dbModels.gameDAL.getTopGames();
+      if (!games) {
+        buildError(404, "Games not found", res);
+        return;
+      }
 
       // Convert the games to the API format
-      let retVal : Game[] = [];
+      let retVal: Game[] = [];
       for (const game of games) {
         let gameObj: Game = await this.dbModels.buildApiGame(game);
         retVal.push(gameObj);
@@ -75,40 +73,13 @@ class GameController {
       const playerId: number = req.body.player_id;
       const enemies: number = req.body.enemies;
       Logger.info(
-        `GameController - Creating game for player ${playerId} with enemies ${enemies}`
+        `GameController - Creating game for player ${playerId} with ${enemies} enemies`
       );
-      const game = await this.dbModels.gameDAL.createGame(playerId);
-      if (!game) {
-        throw new Error("Game not created");
-      }
 
-      let monsterGenerator = new MonsterGenerator();
-      let lootGenerator = new LootGenerator();
-      let randomGenerator = new RandomGenerator();
-      for (let i = 0; i < enemies; i++) {
-        const randomLoot = lootGenerator.generateLoot(
-          randomGenerator.getRandomInteger(1, 10)
-        );
-        // Delete the 'id' field before creating the db object to prevent a SequelizeUniqueConstraintError
-        let randomLootJson = JSON.parse(JSON.stringify(randomLoot));
-        delete randomLootJson.id;
-        const loot = await this.dbModels.lootDAL.create(randomLootJson);
-
-        const randomEnemy = monsterGenerator.generateMonster(loot.id);
-        let randomEnemyJson = JSON.parse(JSON.stringify(randomEnemy));
-        delete randomEnemyJson.id;
-        const monster = await this.dbModels.enemyDAL.createEnemy(
-          randomEnemyJson
-        );
-
-        await this.dbModels.gameDAL.addEnemyToGame(game.id, monster.id);
-        Logger.info(
-          `GameController:Enemy[${i}] - Created loot ${loot.id} and monster ${monster.id} for game ${game.id}`
-        );
-      }
+      const game: IGame = await this.dbModels.generateGame(Number(playerId), Number(enemies));
 
       // Convert the game to the API format
-      const retVal : Game = await this.dbModels.buildApiGame(game);
+      const retVal: Game = await this.dbModels.buildApiGame(game);
       res.status(201).json(retVal);
     } catch (error) {
       Logger.error("GameController - Error creating game:", error);
@@ -119,7 +90,7 @@ class GameController {
   async getGame(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const game = await this.dbModels.gameDAL.getGameById(Number(id));
+      const game: IGame|null = await this.dbModels.gameDAL.getGameById(Number(id));
       if (!game) {
         buildError(404, "Game not found", res);
         return;
@@ -137,8 +108,12 @@ class GameController {
   async deleteGame(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const game = await this.dbModels.gameDAL.deleteGame(Number(id));
-      res.status(204).json(game);
+      const isDelete: boolean = await this.dbModels.gameDAL.deleteGame(
+        Number(id)
+      );
+
+      Logger.info(`GameController - Deleted game with ID ${id} - ${isDelete}`);
+      res.status(204).send();
     } catch (error) {
       Logger.error("GameController - Error deleting game:", error);
       buildError(500, "Internal server error", res);
@@ -148,25 +123,31 @@ class GameController {
   async addEnemyToGame(req: Request, res: Response) {
     try {
       const { id, enemyId } = req.params;
-      const gameEnemy = await this.dbModels.gameDAL.addEnemyToGame(Number(id), Number(enemyId));
+      const gameEnemy: IGameEnemy = await this.dbModels.gameDAL.addEnemyToGame(
+        Number(id),
+        Number(enemyId)
+      );
 
-      const retVal: Enemy = await this.dbModels.buildGameEnemy(gameEnemy);
+      const retVal: Enemy = await this.dbModels.buildApiGameEnemy(gameEnemy);
       res.json(retVal);
     } catch (error) {
-      Logger.error('GameController - Error adding enemy to game:', error);
-      buildError(500, 'Internal server error', res);
+      Logger.error("GameController - Error adding enemy to game:", error);
+      buildError(500, "Internal server error", res);
     }
   }
 
   async removeEnemyFromGame(req: Request, res: Response) {
     try {
       const { id, enemyId } = req.params;
-      Logger.info(`GameController - Removing enemy ${enemyId} from game ${id}`);
-      const game = await this.dbModels.gameDAL.removeEnemyFromGame(
+      const isDelete: boolean = await this.dbModels.gameDAL.removeEnemyFromGame(
         Number(id),
         Number(enemyId)
       );
-      res.json(game);
+
+      Logger.info(
+        `GameController - Deleted enemy ${enemyId} from game ${id} - ${isDelete}`
+      );
+      res.status(204).send();
     } catch (error) {
       Logger.error("GameController - Error removing enemy from game:", error);
       buildError(500, "Internal server error", res);
@@ -176,12 +157,15 @@ class GameController {
   async removeLootFromGame(req: Request, res: Response) {
     try {
       const { id, lootId } = req.params;
-      Logger.info(`GameController - Removing loot ${lootId} from game ${id}`);
-      const game = await this.dbModels.gameDAL.removeLootFromGame(
+      const isDelete: boolean = await this.dbModels.gameDAL.removeLootFromGame(
         Number(id),
         Number(lootId)
       );
-      res.json(game);
+
+      Logger.info(
+        `GameController - Deleted loot ${lootId} from game ${id} - ${isDelete}`
+      );
+      res.status(204).send();
     } catch (error) {
       Logger.error("GameController - Error removing loot from game:", error);
       buildError(500, "Internal server error", res);
@@ -259,21 +243,27 @@ const router = Router();
 const gameController = new GameController();
 
 // Get all Games
-router.get('/', gameController.getGames as RequestHandler);
+router.get("/", gameController.getGames as RequestHandler);
 // Get top games
-router.get('/top', gameController.getTopGames as RequestHandler);
+router.get("/top", gameController.getTopGames as RequestHandler);
 // Create a new Game
-router.post('/new', gameController.createGame as RequestHandler);
+router.post("/new", gameController.createGame as RequestHandler);
 // Get specific Game by ID
-router.get('/:id', gameController.getGame as RequestHandler);
+router.get("/:id", gameController.getGame as RequestHandler);
 // Delete a Game
-router.delete('/:id', gameController.deleteGame as RequestHandler);
+router.delete("/:id", gameController.deleteGame as RequestHandler);
 // Add an enemy to a game
-router.post('/:id/enemy', gameController.getGame as RequestHandler);
+router.post("/:id/enemy", gameController.getGame as RequestHandler);
 // Remove an enemy from a game
-router.delete('/:id/enemy/:enemyId', gameController.removeEnemyFromGame as RequestHandler);
+router.delete(
+  "/:id/enemy/:enemyId",
+  gameController.removeEnemyFromGame as RequestHandler
+);
 // Remove loot from a game
-router.delete('/:id/loot/:lootId', gameController.removeLootFromGame as RequestHandler);
+router.delete(
+  "/:id/loot/:lootId",
+  gameController.removeLootFromGame as RequestHandler
+);
 
 // // Get Current enemy for a game
 // router.get('/:id/enemy', gameController.getCurrentEnemy as RequestHandler);
@@ -289,3 +279,4 @@ router.delete('/:id/loot/:lootId', gameController.removeLootFromGame as RequestH
 // router.get('/:id/loot', gameController.getGameLoot as RequestHandler);
 
 export default router;
+
